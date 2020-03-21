@@ -80,7 +80,7 @@ namespace ReversiApp.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var response = Request.Form["g-recaptcha-response"].ToString();
-                string secretKey = "6Lf9leIUAAAAAEQxHAtFN5z1o8cppPguNCSH2MVB";
+                string secretKey = "6LdnBuMUAAAAAGyi5qcwGMvlOa1rU-8QjIneR5bS";
                 var client = new WebClient();
                 var captchaResult = client.DownloadString(string.Format("https://www.google.com/recaptcha/api/siteverify?secret={0}&response={1}", secretKey, response));
                 var obj = JObject.Parse(captchaResult);
