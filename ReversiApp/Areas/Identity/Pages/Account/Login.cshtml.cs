@@ -79,7 +79,7 @@ namespace ReversiApp.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
-                var response = Request.Form["g-recaptcha-response"].ToString();
+                /*var response = Request.Form["g-recaptcha-response"].ToString();
                 string secretKey = "6LdnBuMUAAAAAGyi5qcwGMvlOa1rU-8QjIneR5bS";
                 var client = new WebClient();
                 var captchaResult = client.DownloadString(string.Format("https://www.google.com/recaptcha/api/siteverify?secret={0}&response={1}", secretKey, response));
@@ -95,7 +95,7 @@ namespace ReversiApp.Areas.Identity.Pages.Account
                     ModelState.AddModelError(string.Empty, "Google captcha failed, try again.");
                 }
                 else
-                {
+                {*/
                     var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                     if (result.Succeeded)
                     {
@@ -117,7 +117,7 @@ namespace ReversiApp.Areas.Identity.Pages.Account
                         ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                         return Page();
                     }
-                }
+                //}
                 
             }
 
