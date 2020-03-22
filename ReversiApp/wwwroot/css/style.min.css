@@ -1,0 +1,106 @@
+.cell {
+  background: green;
+  width: 100px;
+  height: 100px;
+  margin: 0 auto;
+  border: 3px solid black;
+  place-items: center; }
+
+.fiche-zwart {
+  background-color: black;
+  background-image: radial-gradient(white, rgba(255, 255, 255, 0.2) 2px, transparent 40px), radial-gradient(white, rgba(255, 255, 255, 0.15) 1px, transparent 30px), radial-gradient(white, rgba(255, 255, 255, 0.1) 2px, transparent 40px), radial-gradient(rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.1) 2px, transparent 30px);
+  background-size: 50px 50px, 35px 35px, 25px 25px, 15px 15px;
+  background-position: 0 0, 40px 60px, 130px 270px, 70px 100px;
+  width: 95px;
+  height: 95px;
+  border-radius: 50%; }
+
+.fiche-wit {
+  background-color: silver;
+  background-image: radial-gradient(circle at 100% 150%, silver 24%, white 24%, white 28%, silver 28%, silver 36%, white 36%, white 40%, transparent 40%, transparent), radial-gradient(circle at 0 150%, silver 24%, white 24%, white 28%, silver 28%, silver 36%, white 36%, white 40%, transparent 40%, transparent), radial-gradient(circle at 50% 100%, white 10%, silver 10%, silver 23%, white 23%, white 30%, silver 30%, silver 43%, white 43%, white 50%, silver 50%, silver 63%, white 63%, white 71%, transparent 71%, transparent), radial-gradient(circle at 100% 50%, white 5%, silver 5%, silver 15%, white 15%, white 20%, silver 20%, silver 29%, white 29%, white 34%, silver 34%, silver 44%, white 44%, white 49%, transparent 49%, transparent), radial-gradient(circle at 0 50%, white 5%, silver 5%, silver 15%, white 15%, white 20%, silver 20%, silver 29%, white 29%, white 34%, silver 34%, silver 44%, white 44%, white 49%, transparent 49%, transparent);
+  background-size: 100px 50px;
+  width: 95px;
+  height: 95px;
+  border-radius: 50%; }
+
+.feedback-success {
+  border-radius: 2em;
+  height: 500px;
+  margin-top: 20px;
+  margin-left: 100px;
+  margin-right: 100px;
+  overflow: auto; }
+
+.feedback-success__btn {
+  background-color: #e7e7e7;
+  /* Green */
+  border: none;
+  color: gray;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+  font-size: 40px;
+  margin: 4px 2px;
+  cursor: pointer;
+  float: right;
+  margin-right: 40px; }
+
+.feedback-success main {
+  margin-bottom: 150px; }
+
+.feedback-success main p {
+  font-size: 50px;
+  margin: 25px 25px 25px 25px; }
+
+.feedback-success main p span {
+  font-size: 200px; }
+
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+  .feedback-success {
+    height: 400px; }
+  .feedback-success main {
+    margin-bottom: 50px; }
+  .feedback-success main p {
+    font-size: 40px; }
+  .feedback-success main p span {
+    display: none; }
+  .btn--akkoord {
+    display: block;
+    float: none;
+    margin-bottom: 25px; }
+  .btn--weigeren {
+    display: block;
+    float: none; } }
+
+.feedback-success--fade-in {
+  animation: fadeIn ease 1s;
+  -webkit-animation: fadeIn ease 1s;
+  -moz-animation: fadeIn ease 1s;
+  -o-animation: fadeIn ease 1s;
+  -ms-animation: fadeIn ease 1s; }
+
+@keyframes fadeIn {
+  from {
+    opacity: 0; }
+  to {
+    opacity: 1; } }
+
+.btn--akkoord {
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  animation-name: shakeMe;
+  animation-duration: 5s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear; }
+
+@keyframes shakeMe {
+  2%, 18% {
+    transform: translate3d(-5px, 0, 0); }
+  4%, 16% {
+    transform: translate3d(5px, 0, 0); }
+  6%, 10%, 14% {
+    transform: translate3d(-5px, 0, 0); }
+  8%, 12% {
+    transform: translate3d(5px, 0, 0); }
+  18.1% {
+    transform: translate3d(0px, 0, 0); } }

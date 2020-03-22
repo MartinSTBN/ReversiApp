@@ -1,0 +1,43 @@
+﻿@model Game
+
+@{
+    ViewData["Title"] = "Reversi";
+}
+
+    <table id="Bord">
+
+        <h1>@Model.Omschrijving</h1>
+
+        @for (var i = 0; i <= Model.Bord.GetUpperBound(0); i++)
+        {
+            <tr></tr>
+            @for (var j = 0; j <= Model.Bord.GetUpperBound(1); j++)
+            {
+                <td class="cell" id="@Model.Bord[i, j]">
+                    
+                    @if (Model.Bord[i, j].ToString() == "Zwart")
+                    {
+                        <div class="fiche-zwart">.</div>
+                    }
+                    @if (Model.Bord[i, j].ToString() == "Wit")
+                    {
+                        <div class="fiche-wit">.</div>
+                    }
+                </td>
+            }
+        }
+    </table>
+
+
+
+<script src="~/js/app.js" asp-append-version="true"></script>
+<link rel="stylesheet" href="~/css/style.min.css" />
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+    $(function () {
+        
+        $("#Bord td.cell").on("click", function () {
+            Game.placeFiche(this.id);
+        });
+    });
+</script>

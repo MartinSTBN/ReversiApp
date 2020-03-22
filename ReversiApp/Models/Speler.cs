@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -7,13 +6,7 @@ using System.Threading.Tasks;
 
 namespace ReversiApp.Models
 {
-    public enum Kleur
-    {
-        Geen,
-        Wit,
-        Zwart
-    }
-    public class Player 
+    public class Speler
     {
         public string Id { get; set; }
         [DataType(DataType.EmailAddress)]
