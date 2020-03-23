@@ -6,8 +6,7 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-var apiUrl = 'url/super/duper/game';
-console.log("TEST");
+var apiUrl = 'Game/Reversi/';
 
 var Game = function (url) {
   var configMap = {
@@ -17,22 +16,24 @@ var Game = function (url) {
     gameState: 0
   };
 
-  var privateInit = function privateInit(id) {
-    console.log(configMap.apiUrl);
+  var privateInit = function privateInit(environment) {
     this.Reversi.init();
-    this.Reversi.placeFiche(id); // this.Data.init();
-    // this.Model.init();
-    // callbackFunction();
-    //window.setInterval(_getCurrentGameState, 2000);
+    this.Data.init(environment);
+    this.Model.init(); // callbackFunction();
+
+    window.setInterval(_getCurrentGameState, 2000);
   };
 
-  var placeFiche = function placeFiche(id) {
-    this.Reversi.placeFiche(id);
+  var placeFiche = function placeFiche(id, kleur) {
+    this.Reversi.placeFiche(id, kleur);
   };
 
   var _getCurrentGameState = function _getCurrentGameState() {
+    console.log("Getting game state...");
     Game.Model.getGameState().then(function (array) {
-      stateMap.gameState = array[0].data; //console.log('Current gamestate = ' + array[0].data);
+      console.log("Game state retrieved.");
+      stateMap.gameState = array[0].data;
+      console.log('Current gamestate = ' + array[0].data);
     });
   };
 
@@ -141,36 +142,28 @@ Game.Data = function (url) {
     }]
   };
   var stateMap = {
-    environment: 'production'
+    environment: 'development'
   };
 
   var privateInit = function privateInit(environment) {
     console.log('Data initiated.');
     console.log(environment);
-
-    if (environment == 'production') {
-      stateMap.environment = environment;
-      return $.get(url).then(function (r) {
-        return r;
-      })["catch"](function (e) {
-        console.log(e.message);
-      });
-    } else if (environment == 'development') {
-      return getMockData(url);
-    } else {
-      throw new Error('Environment moet de waarde "production" of "development" hebben.');
-    }
+    stateMap.environment = environment;
   };
 
   var get = function get(url) {
-    if (stateMap.environment == 'development') {
-      return getMockData(url);
-    } else if (stateMap.environment == 'production') {
+    console.log(stateMap.environment);
+
+    if (stateMap.environment == 'production') {
       return $.get(url).then(function (r) {
         return r;
       })["catch"](function (e) {
         console.log(e.message);
       });
+    } else if (stateMap.environment == 'development') {
+      return getMockData(url);
+    } else {
+      throw new Error('Environment moet de waarde "production" of "development" hebben.');
     }
   };
 
@@ -209,9 +202,9 @@ Game.Model = function (url) {
   };
 
   var _getGameState = function _getGameState() {
-    var url = "api/Spel/Beurt/<token>"; //aanvraag via Game.Data
+    var token = "13"; //aanvraag via Game.Data
 
-    var state = Game.Data.get(url); //controle of ontvangen data valide is 
+    var state = Game.Data.get(token); //controle of ontvangen data valide is 
 
     if (state.data <= 0 || state.data > 2) {
       throw new Error('Waarde ' + state.data + ' valt buiten de geldige waarde!');
@@ -236,18 +229,18 @@ Game.Reversi = function (url) {
     console.log('Reversi initiated.');
   };
 
-  var placeFiche = function placeFiche(kleur) {
-    $.ajax({
-      url: '/Game/Reversi',
-      type: 'POST',
-      dataType: 'json',
-      data: {
-        kleur: kleur
-      },
-      success: function success(data) {
-        console.log(data);
-      }
-    });
+  var placeFiche = function placeFiche(id, kleur) {
+    var div = document.createElement("div");
+
+    if (kleur == "Wit") {
+      div.className = "fiche-wit";
+    }
+
+    if (kleur == "Zwart") {
+      div.className = "fiche-zwart";
+    }
+
+    document.getElementById(id).appendChild(div);
   };
 
   return {

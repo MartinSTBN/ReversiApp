@@ -11,15 +11,43 @@
         <input type="submit" value="Leave game room" class="btn btn-danger" />
     </form>
 
-    <h1>@Model.Omschrijving</h1>
+    <h1>Room: @Model.Omschrijving</h1>
     <p>Player @Model.Spelers.ElementAt(0).Kleur : @Model.Spelers.ElementAt(0).Email</p>
 }
 else
 {
-    <h1>@Model.Omschrijving</h1>
+    <h1>Room: @Model.Omschrijving</h1>
     <p>Player @Model.Spelers.ElementAt(0).Kleur : @Model.Spelers.ElementAt(0).Email</p>
     <p>Player @Model.Spelers.ElementAt(1).Kleur : @Model.Spelers.ElementAt(1).Email</p>
 }
+
+<div class="container" hidden>
+    <div class="row">&nbsp;</div>
+    <div class="row">
+        <div class="col-2">User</div>
+        <div class="col-4"><input type="text" id="userInput" /></div>
+    </div>
+    <div class="row">
+        <div class="col-2">Message</div>
+        <div class="col-4"><input type="text" id="messageInput" /></div>
+    </div>
+    <div class="row">&nbsp;</div>
+    <div class="row">
+        <div class="col-6">
+            <input type="button" id="sendButton" value="Send Message" />
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <hr />
+    </div>
+</div>
+<div class="row">
+    <div class="col-6">
+        <ul id="messagesList"></ul>
+    </div>
+</div>
 
 <table id="Bord">
 
@@ -28,7 +56,7 @@ else
         <tr></tr>
         @for (var j = 0; j <= Model.Bord.GetUpperBound(1); j++)
         {
-            <td class="cell" id="@Model.Bord[i, j]">
+            <td class="cell" id="@i@j">
 
                 @if (Model.Bord[i, j].ToString() == "Zwart")
                 {
@@ -44,17 +72,57 @@ else
 
 </table>
 
-
-
-
 <script src="~/js/app.js" asp-append-version="true"></script>
 <link rel="stylesheet" href="~/css/style.min.css" />
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
 <script>
     $(function () {
+        "use strict";
 
-        $("#Bord td.cell").on("click", function () {
-            Game.placeFiche(this.id);
+        var connection = new signalR.HubConnectionBuilder().withUrl("/gameHub").build();
+
+        //Disable send button until connection is established
+        document.getElementById("sendButton").disabled = true;
+
+        connection.on("ReceiveMessage", function (user, message) {
+            var msg = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            var encodedMsg = user + " says " + msg;
+            var li = document.createElement("li");
+            li.textContent = encodedMsg;
+            document.getElementById("messagesList").appendChild(li);
         });
+
+        connection.on("ReceiveGameData", function (id, color) {
+            Game.placeFiche(id, "Zwart");
+        });
+
+        connection.start().then(function () {
+            document.getElementById("sendButton").disabled = false;
+            console.log("Before game init");
+           // Game.init('development');
+            Game.init('production');
+            $(".cell").on("click", function () {
+                connection.invoke("SendGameData", this.id, "Zwart").catch(function (err) {
+                    return console.error(err.toString());
+                });
+            });
+            
+        }).catch(function (err) {
+            return console.error(err.toString());
+        });
+
+        document.getElementById("sendButton").addEventListener("click", function (event) {
+            var user = document.getElementById("userInput").value;
+            var message = document.getElementById("messageInput").value;
+            connection.invoke("SendMessage", user, message).catch(function (err) {
+                return console.error(err.toString());
+            });
+            event.preventDefault();
+        });
+
+        
+
+        
     });
 </script>

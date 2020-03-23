@@ -1,7 +1,7 @@
 .cell {
   background: green;
-  width: 100px;
-  height: 100px;
+  width: 75px;
+  height: 75px;
   margin: 0 auto;
   border: 3px solid black;
   place-items: center; }
@@ -11,17 +11,38 @@
   background-image: radial-gradient(white, rgba(255, 255, 255, 0.2) 2px, transparent 40px), radial-gradient(white, rgba(255, 255, 255, 0.15) 1px, transparent 30px), radial-gradient(white, rgba(255, 255, 255, 0.1) 2px, transparent 40px), radial-gradient(rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.1) 2px, transparent 30px);
   background-size: 50px 50px, 35px 35px, 25px 25px, 15px 15px;
   background-position: 0 0, 40px 60px, 130px 270px, 70px 100px;
-  width: 95px;
-  height: 95px;
-  border-radius: 50%; }
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  animation-name: fade-in-pulse;
+  animation-fill-mode: both;
+  animation-duration: .75s; }
 
 .fiche-wit {
   background-color: silver;
   background-image: radial-gradient(circle at 100% 150%, silver 24%, white 24%, white 28%, silver 28%, silver 36%, white 36%, white 40%, transparent 40%, transparent), radial-gradient(circle at 0 150%, silver 24%, white 24%, white 28%, silver 28%, silver 36%, white 36%, white 40%, transparent 40%, transparent), radial-gradient(circle at 50% 100%, white 10%, silver 10%, silver 23%, white 23%, white 30%, silver 30%, silver 43%, white 43%, white 50%, silver 50%, silver 63%, white 63%, white 71%, transparent 71%, transparent), radial-gradient(circle at 100% 50%, white 5%, silver 5%, silver 15%, white 15%, white 20%, silver 20%, silver 29%, white 29%, white 34%, silver 34%, silver 44%, white 44%, white 49%, transparent 49%, transparent), radial-gradient(circle at 0 50%, white 5%, silver 5%, silver 15%, white 15%, white 20%, silver 20%, silver 29%, white 29%, white 34%, silver 34%, silver 44%, white 44%, white 49%, transparent 49%, transparent);
   background-size: 100px 50px;
-  width: 95px;
-  height: 95px;
-  border-radius: 50%; }
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  animation-name: fade-in-pulse;
+  animation-fill-mode: both;
+  animation-duration: .75s; }
+
+@keyframes fade-in-pulse {
+  from {
+    -webkit-transform: scale3d(1, 1, 1);
+    transform: scale3d(1, 1, 1); }
+  50% {
+    -webkit-transform: scale3d(1.05, 1.05, 1.05);
+    transform: scale3d(1.05, 1.05, 1.05); }
+  to {
+    -webkit-transform: scale3d(1, 1, 1);
+    transform: scale3d(1, 1, 1); }
+  0% {
+    opacity: 0; }
+  100% {
+    opacity: 1; } }
 
 .feedback-success {
   border-radius: 2em;

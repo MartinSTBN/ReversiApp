@@ -80,7 +80,9 @@ namespace ReversiApp.Controllers
                 game.AandeBeurt = Kleur.Zwart;
                 _context.Add(game);
                 await _context.SaveChangesAsync();
-                //game.Token = await _userManager.generate
+                Hash hash = new Hash();
+                Salt salt = new Salt();
+                game.Token = hash.Create(game.GameID.ToString(), salt.Create());
 
 
                 IdentityUser user = await _userManager.GetUserAsync(User);
@@ -98,7 +100,7 @@ namespace ReversiApp.Controllers
                 game.Spelers = new List<Speler>();
                 game.Spelers.Add(speler);
 
-                return RedirectToAction("Reversi", "Game", new { token = game.Token });
+                return LocalRedirect("/Game/Reversi/" + game.GameID);
             }
             return View(game);
         }
@@ -180,7 +182,8 @@ namespace ReversiApp.Controllers
             
             var game = await _context.Game.FindAsync(id);
             IdentityUser user = await _userManager.GetUserAsync(User);
-            var speler = await _context.Speler.FindAsync(user.Id);
+            var speler = await _context.Speler.FirstOrDefaultAsync(m => m.GameID == game.GameID);
+
 
             _context.Speler.Remove(speler);
             _context.Game.Remove(game);

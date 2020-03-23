@@ -36,6 +36,7 @@ namespace ReversiApp
                 
             services.AddControllersWithViews();
             services.AddRazorPages();
+            services.AddSignalR();
 
             services.Configure<IdentityOptions>(options =>
             {
@@ -98,6 +99,7 @@ namespace ReversiApp
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
+                endpoints.MapHub<GameHub>("/gameHub");
             });
         }
     }
