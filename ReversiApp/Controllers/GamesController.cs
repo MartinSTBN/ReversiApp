@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -13,15 +14,33 @@ namespace ReversiApp.Controllers
     public class GamesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public GamesController(ApplicationDbContext context)
+        public GamesController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Games
         public async Task<IActionResult> Index()
         {
+            IdentityUser user = await _userManager.GetUserAsync(User);
+
+            if (user != null)
+            {
+                var speler = await _context.Speler.FindAsync(user.Id);
+                if (speler != null)
+                {
+                    var game = await _context.Game.FindAsync(speler.GameID);
+                    return LocalRedirect("/Game/Reversi/" + game.GameID);
+                }
+            }
+            else
+            {
+                return LocalRedirect("/Identity/Account/Login");
+            }
+
             return View(await _context.Game.ToListAsync());
         }
 
@@ -58,9 +77,28 @@ namespace ReversiApp.Controllers
         {
             if (ModelState.IsValid)
             {
+                game.AandeBeurt = Kleur.Zwart;
                 _context.Add(game);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                //game.Token = await _userManager.generate
+
+
+                IdentityUser user = await _userManager.GetUserAsync(User);
+                Speler speler = new Speler();
+                speler.Id = user.Id;
+                speler.Email = user.Email;
+                speler.Password = user.PasswordHash;
+                speler.Token = game.Token;
+                speler.Kleur = Kleur.Wit;
+                speler.GameID = game.GameID;
+
+                _context.Add(speler);
+                await _context.SaveChangesAsync();
+
+                game.Spelers = new List<Speler>();
+                game.Spelers.Add(speler);
+
+                return RedirectToAction("Reversi", "Game", new { token = game.Token });
             }
             return View(game);
         }
@@ -139,7 +177,12 @@ namespace ReversiApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            
             var game = await _context.Game.FindAsync(id);
+            IdentityUser user = await _userManager.GetUserAsync(User);
+            var speler = await _context.Speler.FindAsync(user.Id);
+
+            _context.Speler.Remove(speler);
             _context.Game.Remove(game);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

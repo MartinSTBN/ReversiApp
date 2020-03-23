@@ -4,7 +4,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Game rooms</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -14,12 +14,6 @@
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.Omschrijving)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Token)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AandeBeurt)
             </th>
             <th></th>
         </tr>
@@ -31,16 +25,14 @@
                 @Html.DisplayFor(modelItem => item.Omschrijving)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Token)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AandeBeurt)
-            </td>
-            <td>
-                <a asp-controller="Game" asp-action="Reversi" asp-route-id="@item.GameID">Join</a> |
-                <a asp-action="Edit" asp-route-id="@item.GameID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.GameID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.GameID">Delete</a>
+                <a asp-controller="Game" asp-action="Reversi" asp-route-id="@item.GameID">Join</a>
+                @if (User.IsInRole("Administrator"))
+                {
+                    <a asp-action="Edit" asp-route-id="@item.GameID">Edit</a>
+                    <a asp-action="Details" asp-route-id="@item.GameID"> Details </a>
+                    <a asp-action="Delete" asp-route-id="@item.GameID"> Delete </a>
+                }
+
             </td>
         </tr>
 }

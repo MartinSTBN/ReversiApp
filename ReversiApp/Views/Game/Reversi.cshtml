@@ -4,29 +4,46 @@
     ViewData["Title"] = "Reversi";
 }
 
-    <table id="Bord">
+@if (Model.Spelers.Count < 2)
+{
+    <form asp-action="Delete" asp-controller="Games" asp-route-id="@Model.GameID">
+        <input type="hidden" asp-for="GameID" />
+        <input type="submit" value="Leave game room" class="btn btn-danger" />
+    </form>
 
-        <h1>@Model.Omschrijving</h1>
+    <h1>@Model.Omschrijving</h1>
+    <p>Player @Model.Spelers.ElementAt(0).Kleur : @Model.Spelers.ElementAt(0).Email</p>
+}
+else
+{
+    <h1>@Model.Omschrijving</h1>
+    <p>Player @Model.Spelers.ElementAt(0).Kleur : @Model.Spelers.ElementAt(0).Email</p>
+    <p>Player @Model.Spelers.ElementAt(1).Kleur : @Model.Spelers.ElementAt(1).Email</p>
+}
 
-        @for (var i = 0; i <= Model.Bord.GetUpperBound(0); i++)
+<table id="Bord">
+
+    @for (var i = 0; i <= Model.Bord.GetUpperBound(0); i++)
+    {
+        <tr></tr>
+        @for (var j = 0; j <= Model.Bord.GetUpperBound(1); j++)
         {
-            <tr></tr>
-            @for (var j = 0; j <= Model.Bord.GetUpperBound(1); j++)
-            {
-                <td class="cell" id="@Model.Bord[i, j]">
-                    
-                    @if (Model.Bord[i, j].ToString() == "Zwart")
-                    {
-                        <div class="fiche-zwart">.</div>
-                    }
-                    @if (Model.Bord[i, j].ToString() == "Wit")
-                    {
-                        <div class="fiche-wit">.</div>
-                    }
-                </td>
-            }
+            <td class="cell" id="@Model.Bord[i, j]">
+
+                @if (Model.Bord[i, j].ToString() == "Zwart")
+                {
+                    <div class="fiche-zwart">.</div>
+                }
+                @if (Model.Bord[i, j].ToString() == "Wit")
+                {
+                    <div class="fiche-wit">.</div>
+                }
+            </td>
         }
-    </table>
+    }
+
+</table>
+
 
 
 
@@ -35,7 +52,7 @@
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script>
     $(function () {
-        
+
         $("#Bord td.cell").on("click", function () {
             Game.placeFiche(this.id);
         });

@@ -291,7 +291,7 @@ namespace ReversiApp.Data.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("GameID")
+                    b.Property<int?>("GameID1")
                         .HasColumnType("int");
 
                     b.Property<int>("Kleur")
@@ -305,7 +305,7 @@ namespace ReversiApp.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GameID");
+                    b.HasIndex("GameID1");
 
                     b.ToTable("Speler");
                 });
@@ -381,9 +381,9 @@ namespace ReversiApp.Data.Migrations
 
             modelBuilder.Entity("ReversiApp.Models.Speler", b =>
                 {
-                    b.HasOne("ReversiApp.Models.Game", null)
+                    b.HasOne("ReversiApp.Models.Game", "GameID")
                         .WithMany("Spelers")
-                        .HasForeignKey("GameID");
+                        .HasForeignKey("GameID1");
                 });
 #pragma warning restore 612, 618
         }
