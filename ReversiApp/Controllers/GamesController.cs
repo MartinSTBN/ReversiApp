@@ -115,6 +115,25 @@ namespace ReversiApp.Controllers
                 game.Spelers = new List<Speler>();
                 game.Spelers.Add(speler);
 
+                //Create the playing board
+                BordArrayValues bordValues = new BordArrayValues();
+                for (int i = 0; i < game.Bord.GetUpperBound(0); i++)
+                {
+                    for (int j = 0; j < game.Bord.GetUpperBound(1); j++)
+                    {
+                        bordValues.ArrayIndexX = i;
+                        bordValues.ArrayIndexY = j;
+                        bordValues.Value = Convert.ToInt32(game.AandeBeurt);
+                        bordValues.GameID = 50;
+                        await _context.AddAsync(bordValues);
+                        await _context.SaveChangesAsync();
+                    }
+                }
+
+
+
+
+
                 return LocalRedirect("/Game/Reversi/" + game.GameID);
             }
             return View(game);

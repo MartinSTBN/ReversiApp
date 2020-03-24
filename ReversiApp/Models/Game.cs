@@ -13,6 +13,8 @@ namespace ReversiApp.Models
         public string Token { get; set; }
         public ICollection<Speler> Spelers { get; set; }
         [NotMapped]
+        public Speler Speler  { get; set; }
+        [NotMapped]
         public Kleur[,] Bord { get; set; }
         public Kleur AandeBeurt { get; set; }
         private List<string> stukkenTeSlaan;

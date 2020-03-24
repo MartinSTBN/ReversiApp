@@ -6,7 +6,11 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-var apiUrl = 'Game/Reversi/';
+var string = window.location.pathname;
+var split = string.split("/");
+var id = split[3];
+var apiUrl = window.location.origin + "/api/spel/beurt/" + id;
+console.log(apiUrl);
 
 var Game = function (url) {
   var configMap = {
@@ -28,19 +32,22 @@ var Game = function (url) {
     this.Reversi.placeFiche(id, kleur);
   };
 
+  var setTitle = function setTitle(kleur) {
+    this.Reversi.setTitle(kleur);
+  };
+
   var _getCurrentGameState = function _getCurrentGameState() {
-    console.log("Getting game state...");
-    Game.Model.getGameState().then(function (array) {
-      console.log("Game state retrieved.");
-      stateMap.gameState = array[0].data;
-      console.log('Current gamestate = ' + array[0].data);
+    Game.Model.getGameState(configMap.apiUrl).then(function (array) {
+      stateMap.gameState = array;
+      console.log(stateMap.gameState);
     });
   };
 
   return {
     init: privateInit,
     currentGameState: _getCurrentGameState,
-    placeFiche: placeFiche
+    placeFiche: placeFiche,
+    setTitle: setTitle
   };
 }(apiUrl);
 
@@ -135,9 +142,9 @@ var FeedbackWidget = /*#__PURE__*/function () {
 
 Game.Data = function (url) {
   var configMap = {
-    url: "http://api.openweathermap.org/data/2.5/weather?q=zwolle&apikey=2f86f292a0a338f6e118a047474c372e",
+    url: apiUrl,
     mock: [{
-      url: "api/Spel/Beurt",
+      url: url,
       data: 0
     }]
   };
@@ -146,14 +153,10 @@ Game.Data = function (url) {
   };
 
   var privateInit = function privateInit(environment) {
-    console.log('Data initiated.');
-    console.log(environment);
     stateMap.environment = environment;
   };
 
   var get = function get(url) {
-    console.log(stateMap.environment);
-
     if (stateMap.environment == 'production') {
       return $.get(url).then(function (r) {
         return r;
@@ -185,9 +188,7 @@ Game.Model = function (url) {
     apiUrl: url
   };
 
-  var privateInit = function privateInit() {
-    console.log('Model initiated.');
-  };
+  var privateInit = function privateInit() {};
 
   var getWeather = function getWeather(key) {
     return Game.Data.get(key).then(function (data) {
@@ -201,10 +202,9 @@ Game.Model = function (url) {
     });
   };
 
-  var _getGameState = function _getGameState() {
-    var token = "13"; //aanvraag via Game.Data
-
-    var state = Game.Data.get(token); //controle of ontvangen data valide is 
+  var _getGameState = function _getGameState(url) {
+    //aanvraag via Game.Data
+    var state = Game.Data.get(url); //controle of ontvangen data valide is 
 
     if (state.data <= 0 || state.data > 2) {
       throw new Error('Waarde ' + state.data + ' valt buiten de geldige waarde!');
@@ -225,26 +225,30 @@ Game.Reversi = function (url) {
     apiUrl: url
   };
 
-  var privateInit = function privateInit() {
-    console.log('Reversi initiated.');
-  };
+  var privateInit = function privateInit() {};
 
   var placeFiche = function placeFiche(id, kleur) {
     var div = document.createElement("div");
 
-    if (kleur == "Wit") {
+    if (kleur == 1) {
       div.className = "fiche-wit";
     }
 
-    if (kleur == "Zwart") {
+    if (kleur == 2) {
       div.className = "fiche-zwart";
     }
 
     document.getElementById(id).appendChild(div);
   };
 
+  var setTitle = function setTitle(kleur) {
+    var div = document.getElementById("AanDeBeurt");
+    div.textContent = "Player " + kleur + " is aan de beurt";
+  };
+
   return {
     init: privateInit,
-    placeFiche: placeFiche
+    placeFiche: placeFiche,
+    setTitle: setTitle
   };
 }(apiUrl);

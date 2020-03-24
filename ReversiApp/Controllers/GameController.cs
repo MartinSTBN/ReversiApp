@@ -16,34 +16,37 @@ namespace ReversiApp.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
+        private Game game;
 
         public GameController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
             _userManager = userManager;
+            game = new Game();
         }
 
         [HttpGet("/Game/Reversi/{id}")]
-        
+
         public async Task<IActionResult> Reversi(int id)
         {
-            Game game = new Game();
+
             IdentityUser user = await _userManager.GetUserAsync(User);
             //Check if user is logged in
             if (user != null)
             {
                 game = await _context.Game.FirstOrDefaultAsync(m => m.GameID == id);
                 //Check if game exists, else NotFound
-                if(game != null)
+                if (game != null)
                 {
                     var playersInGame = await _context.Speler.Where(m => m.GameID == game.GameID).ToListAsync();
-                    
+
                     game.Spelers = new List<Speler>();
                     var userExists = await _context.Speler.FirstOrDefaultAsync(m => m.Id == user.Id);
 
-                    //Check if game is already full or if the player is in this game
+                    //Check if game is full or if the player is in this game
                     if (playersInGame.Count < 2 || userExists != null)
                     {
+                        game.Speler = userExists;
                         //Check if user is already a player and add them to the game
                         if (userExists == null)
                         {
@@ -54,6 +57,7 @@ namespace ReversiApp.Controllers
                             speler.Token = game.Token;
                             speler.Kleur = Kleur.Zwart;
                             speler.GameID = game.GameID;
+                            game.Speler = speler;
 
                             var waitingPlayer = await _context.Speler.FirstOrDefaultAsync(m => m.GameID == game.GameID);
                             _context.Add(speler);
@@ -70,12 +74,12 @@ namespace ReversiApp.Controllers
                     else
                     {
                         return RedirectToAction("Index", "Games");
-                    } 
+                    }
                 }
                 else
                 {
                     return NotFound();
-                } 
+                }
             }
             else
             {
@@ -84,10 +88,8 @@ namespace ReversiApp.Controllers
             return View(game);
         }
 
-        /*[HttpPost]
-        public JsonResult Reversi(string kleur)
-        {
-            return Json(kleur);
-        }*/
+
+
+
     }
 }

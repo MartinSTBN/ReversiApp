@@ -16,9 +16,9 @@
 
 @foreach (var speler in Model.Spelers)
 {
-    <p>Player @speler.Kleur : @speler.Email</p>
+    <p>Player @speler.Kleur : @speler.Email</p> 
 }
-
+<p id="AanDeBeurt">Player @Model.AandeBeurt his turn</p>
 
 <div class="container" hidden>
     <div class="row">&nbsp;</div>
@@ -55,7 +55,7 @@
         <tr></tr>
         @for (var j = 0; j <= Model.Bord.GetUpperBound(1); j++)
         {
-            <td class="cell" id="@i@j">
+            <td class="cell" id="@i @j">
 
                 @if (Model.Bord[i, j].ToString() == "Zwart")
                 {
@@ -79,49 +79,47 @@
     $(function () {
         "use strict";
 
+        var aanDeBeurt = '@Model.AandeBeurt';
+
         var connection = new signalR.HubConnectionBuilder().withUrl("/gameHub").build();
 
-        //Disable send button until connection is established
-        document.getElementById("sendButton").disabled = true;
-
-        connection.on("ReceiveMessage", function (user, message) {
-            var msg = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-            var encodedMsg = user + " says " + msg;
-            var li = document.createElement("li");
-            li.textContent = encodedMsg;
-            document.getElementById("messagesList").appendChild(li);
+        connection.on("ReceiveGameData", function (cellId, color, zetMogelijk) {
+            if (zetMogelijk) {
+                if (color == 2) {
+                    color = 1;
+                    aanDeBeurt = "Zwart"
+                } else {
+                    color = 2;
+                    aanDeBeurt = "Wit";
+                }
+                Game.placeFiche(cellId, color);
+                Game.setTitle(aanDeBeurt);
+            } else {
+                alert("ZET NIET MOGELIJK!");
+            }
+            
         });
 
-        connection.on("ReceiveGameData", function (id, color) {
-            Game.placeFiche(id, "Zwart");
+        connection.on("Test", function (row, column, zetMogelijk) {
+            console.log(row + " " + column + " "+ zetMogelijk);
+
         });
 
         connection.start().then(function () {
-            document.getElementById("sendButton").disabled = false;
-            console.log("Before game init");
-            // Game.init('development');
             Game.init('production');
             $(".cell").on("click", function () {
-                connection.invoke("SendGameData", this.id, "Zwart").catch(function (err) {
-                    return console.error(err.toString());
-                });
+                if (aanDeBeurt == '@Model.Speler.Kleur') {
+                    connection.invoke("SendGameData", this.id, "@Model.Speler.Kleur", "@Model.GameID").catch(function (err) {
+                        return console.error(err.toString());
+                    });
+                } else {
+                    alert(aanDeBeurt + ' is aan de beurt');
+                }
             });
-
         }).catch(function (err) {
             return console.error(err.toString());
         });
 
-        document.getElementById("sendButton").addEventListener("click", function (event) {
-            var user = document.getElementById("userInput").value;
-            var message = document.getElementById("messageInput").value;
-            connection.invoke("SendMessage", user, message).catch(function (err) {
-                return console.error(err.toString());
-            });
-            event.preventDefault();
-        });
-
-
-
-
     });
+   
 </script>
