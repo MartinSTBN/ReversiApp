@@ -27,9 +27,11 @@ namespace ReversiApp.Controllers
         {
             IdentityUser user = await _userManager.GetUserAsync(User);
 
+            //Checks if user is logged in
             if (user != null)
             {
                 var speler = await _context.Speler.FindAsync(user.Id);
+                //Checks if user is already in game
                 if (speler != null)
                 {
                     var game = await _context.Game.FindAsync(speler.GameID);
@@ -41,7 +43,20 @@ namespace ReversiApp.Controllers
                 return LocalRedirect("/Identity/Account/Login");
             }
 
-            return View(await _context.Game.ToListAsync());
+            //Checks if games are joinable => already contain 2 players
+            List<Game> games = await _context.Game.ToListAsync();
+            List<Game> joinableGames = new List<Game>();
+
+            foreach (var game in games)
+            {
+                var playersInGame = await _context.Speler.Where(m => m.GameID == game.GameID).ToListAsync();
+                if(playersInGame.Count < 2)
+                {
+                    joinableGames.Add(game);
+                }
+            }
+            
+            return View(joinableGames);
         }
 
         // GET: Games/Details/5

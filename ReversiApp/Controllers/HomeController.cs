@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using ReversiApp.Data;
 using ReversiApp.Models;
 
 namespace ReversiApp.Controllers
@@ -14,16 +15,25 @@ namespace ReversiApp.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private UserManager<IdentityUser> _userManager;
+        private readonly ApplicationDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger, UserManager<IdentityUser> userManager)
+        public HomeController(ILogger<HomeController> logger, UserManager<IdentityUser> userManager, ApplicationDbContext context)
         {
             _logger = logger;
             _userManager = userManager;
+            _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            IdentityUser user = await _userManager.GetUserAsync(User);
+            Speler speler = new Speler();
+            //Checks if user is logged in
+            if (user != null)
+            {
+                speler = await _context.Speler.FindAsync(user.Id);
+            }
+            return View(speler);
         }
 
         public IActionResult Privacy()

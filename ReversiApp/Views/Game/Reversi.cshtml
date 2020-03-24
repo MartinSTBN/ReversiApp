@@ -10,16 +10,15 @@
         <input type="hidden" asp-for="GameID" />
         <input type="submit" value="Leave game room" class="btn btn-danger" />
     </form>
+}
 
-    <h1>Room: @Model.Omschrijving</h1>
-    <p>Player @Model.Spelers.ElementAt(0).Kleur : @Model.Spelers.ElementAt(0).Email</p>
-}
-else
+<h1>Room: @Model.Omschrijving</h1>
+
+@foreach (var speler in Model.Spelers)
 {
-    <h1>Room: @Model.Omschrijving</h1>
-    <p>Player @Model.Spelers.ElementAt(0).Kleur : @Model.Spelers.ElementAt(0).Email</p>
-    <p>Player @Model.Spelers.ElementAt(1).Kleur : @Model.Spelers.ElementAt(1).Email</p>
+    <p>Player @speler.Kleur : @speler.Email</p>
 }
+
 
 <div class="container" hidden>
     <div class="row">&nbsp;</div>
@@ -100,14 +99,14 @@ else
         connection.start().then(function () {
             document.getElementById("sendButton").disabled = false;
             console.log("Before game init");
-           // Game.init('development');
+            // Game.init('development');
             Game.init('production');
             $(".cell").on("click", function () {
                 connection.invoke("SendGameData", this.id, "Zwart").catch(function (err) {
                     return console.error(err.toString());
                 });
             });
-            
+
         }).catch(function (err) {
             return console.error(err.toString());
         });
@@ -121,8 +120,8 @@ else
             event.preventDefault();
         });
 
-        
 
-        
+
+
     });
 </script>
