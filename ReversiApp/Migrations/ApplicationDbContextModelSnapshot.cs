@@ -3,17 +3,15 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ReversiApp.Data;
 
-namespace ReversiApp.Data.Migrations
+namespace ReversiApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200322203330_SpelerTable")]
-    partial class SpelerTable
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -221,6 +219,51 @@ namespace ReversiApp.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("ReversiApp.Models.BordArrayValues", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("ArrayIndexX")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ArrayIndexY")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GameID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Value")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("BordArrayValues");
+                });
+
+            modelBuilder.Entity("ReversiApp.Models.Game", b =>
+                {
+                    b.Property<int>("GameID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("AandeBeurt")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Omschrijving")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Token")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("GameID");
+
+                    b.ToTable("Game");
+                });
+
             modelBuilder.Entity("ReversiApp.Models.Speler", b =>
                 {
                     b.Property<string>("Id")
@@ -228,6 +271,9 @@ namespace ReversiApp.Data.Migrations
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("GameID")
+                        .HasColumnType("int");
 
                     b.Property<int>("Kleur")
                         .HasColumnType("int");
@@ -239,6 +285,8 @@ namespace ReversiApp.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("GameID");
 
                     b.ToTable("Speler");
                 });
@@ -290,6 +338,15 @@ namespace ReversiApp.Data.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ReversiApp.Models.Speler", b =>
+                {
+                    b.HasOne("ReversiApp.Models.Game", null)
+                        .WithMany("Spelers")
+                        .HasForeignKey("GameID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

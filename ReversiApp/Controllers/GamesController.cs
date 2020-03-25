@@ -88,17 +88,20 @@ namespace ReversiApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("GameID,Omschrijving,Token,AandeBeurt")] Game game)
+        public async Task<IActionResult> Create([Bind("GameID,Omschrijving")] Game asd)
         {
+            Game game = new Game();
             if (ModelState.IsValid)
             {
+                game = new Game();
+                game.Omschrijving = "peop";
+                game.Token = "1";
                 game.AandeBeurt = Kleur.Zwart;
                 _context.Add(game);
                 await _context.SaveChangesAsync();
                 Hash hash = new Hash();
                 Salt salt = new Salt();
-                game.Token = hash.Create(game.GameID.ToString(), salt.Create());
-
+                //game.Token = hash.Create(game.GameID.ToString(), salt.Create());
 
                 IdentityUser user = await _userManager.GetUserAsync(User);
                 Speler speler = new Speler();
@@ -114,25 +117,21 @@ namespace ReversiApp.Controllers
 
                 game.Spelers = new List<Speler>();
                 game.Spelers.Add(speler);
-
-                //Create the playing board
-                BordArrayValues bordValues = new BordArrayValues();
+                
                 for (int i = 0; i < game.Bord.GetUpperBound(0); i++)
                 {
                     for (int j = 0; j < game.Bord.GetUpperBound(1); j++)
                     {
+                        //Create the playing board
+                        BordArrayValues bordValues = new BordArrayValues();
                         bordValues.ArrayIndexX = i;
                         bordValues.ArrayIndexY = j;
-                        bordValues.Value = Convert.ToInt32(game.AandeBeurt);
-                        bordValues.GameID = 50;
-                        await _context.AddAsync(bordValues);
+                        bordValues.Value = Convert.ToInt32(game.Bord[i,j]);
+                        bordValues.GameID = game.GameID;
+                        _context.Add(bordValues);
                         await _context.SaveChangesAsync();
                     }
                 }
-
-
-
-
 
                 return LocalRedirect("/Game/Reversi/" + game.GameID);
             }
@@ -217,8 +216,13 @@ namespace ReversiApp.Controllers
             var game = await _context.Game.FindAsync(id);
             IdentityUser user = await _userManager.GetUserAsync(User);
             var speler = await _context.Speler.FirstOrDefaultAsync(m => m.GameID == game.GameID);
+            var bordValues = await _context.BordArrayValues.Where(m => m.GameID == game.GameID).ToListAsync();
+            foreach (var value in bordValues)
+            {
+                _context.BordArrayValues.Remove(value);
+            }
 
-
+            
             _context.Speler.Remove(speler);
             _context.Game.Remove(game);
             await _context.SaveChangesAsync();

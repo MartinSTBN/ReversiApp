@@ -18,7 +18,7 @@
 {
     <p>Player @speler.Kleur : @speler.Email</p> 
 }
-<p id="AanDeBeurt">Player @Model.AandeBeurt his turn</p>
+<p id="AanDeBeurt"></p>
 
 <div class="container" hidden>
     <div class="row">&nbsp;</div>
@@ -55,17 +55,7 @@
         <tr></tr>
         @for (var j = 0; j <= Model.Bord.GetUpperBound(1); j++)
         {
-            <td class="cell" id="@i @j">
-
-                @if (Model.Bord[i, j].ToString() == "Zwart")
-                {
-                    <div class="fiche-zwart">.</div>
-                }
-                @if (Model.Bord[i, j].ToString() == "Wit")
-                {
-                    <div class="fiche-wit">.</div>
-                }
-            </td>
+            <td class="cell" id="@i @j"></td>
         }
     }
 
@@ -97,7 +87,31 @@
             } else {
                 alert("ZET NIET MOGELIJK!");
             }
-            
+
+        });
+
+        connection.on("ReceiveBordData", function (values, aanDeBeurt) {
+            var bordValues = function () {
+                for (var i = 0; i < values.length; i++) {
+                    var id = values[i].arrayIndexX + " " + values[i].arrayIndexY;
+                    var color = values[i].value;
+                    var div = document.createElement("div");
+                    if (color == 1) {
+                        div.className = "fiche-wit";
+                    }
+                    if (color == 2) {
+                        div.className = "fiche-zwart";
+                    }
+                    document.getElementById(id).appendChild(div);
+                }
+            }
+            bordValues();
+            if (aanDeBeurt == 1) {
+                aanDeBeurt = "Wit";
+            } else {
+                aanDeBeurt = "Zwart";
+            }
+            Game.setTitle(aanDeBeurt);
         });
 
         connection.on("Test", function (row, column, zetMogelijk) {
@@ -107,6 +121,9 @@
 
         connection.start().then(function () {
             Game.init('production');
+            connection.invoke("GetBordData", "@Model.GameID").catch(function (err) {
+                return console.error(err.toString());
+            });
             $(".cell").on("click", function () {
                 if (aanDeBeurt == '@Model.Speler.Kleur') {
                     connection.invoke("SendGameData", this.id, "@Model.Speler.Kleur", "@Model.GameID").catch(function (err) {
@@ -121,5 +138,5 @@
         });
 
     });
-   
+
 </script>

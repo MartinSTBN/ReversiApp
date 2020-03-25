@@ -16,7 +16,6 @@ namespace ReversiApp.Data
         }
         public DbSet<Game> Game { get; set; }
         public DbSet<Speler> Speler { get; set; }
-        public DbSet<Games> Games { get; set; }
         public DbSet<BordArrayValues> BordArrayValues { get; set; }
     }
 }
