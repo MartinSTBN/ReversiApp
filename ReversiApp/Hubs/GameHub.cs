@@ -50,16 +50,16 @@ namespace ReversiApp
                     var splitTeSlaan = item.Split(",");
                     var rowTeSlaan = Convert.ToInt32(splitTeSlaan[0]);
                     var columnTeSlaan = Convert.ToInt32(splitTeSlaan[1]);
-                    var value = _context.BordArrayValues.FirstOrDefault(item => item.GameID == game.GameID && item.Row == rowTeSlaan && item.Column == rowTeSlaan);
+                    var value = _context.BordArrayValues.FirstOrDefault(item => item.GameID == game.GameID && item.Row == rowTeSlaan && item.Column == columnTeSlaan);
 
-                    if (color == "Wit") { value.Value = 1; } else { value.Value = 2; }
+                    if (color == "Wit") { value.Value = 1; } else if (color == "Zwart") { value.Value = 2; }
                     _context.Update(value);
                     await _context.SaveChangesAsync();
                 }
                 
                 //Update bord stuk gezet
                 var gezet = _context.BordArrayValues.FirstOrDefault(item => item.GameID == game.GameID && item.Row == row && item.Column == column);
-                if (color == "Wit") { gezet.Value = 1; } else { gezet.Value = 2; }
+                if (color == "Wit") { gezet.Value = 1; } else if (color == "Zwart") { gezet.Value = 2; }
                 _context.Update(gezet);
                 await _context.SaveChangesAsync();
 
