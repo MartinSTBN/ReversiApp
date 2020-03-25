@@ -40,7 +40,6 @@ namespace ReversiApp
             {
                 game.Bord[item.Row, item.Column] = (Kleur)item.Value;
             }
-
             bool zetMogelijk = game.DoeZet(row, column);
 
             if (zetMogelijk)

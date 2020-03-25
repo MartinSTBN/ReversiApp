@@ -115,9 +115,9 @@ namespace ReversiApp.Controllers
                 game.Spelers = new List<Speler>();
                 game.Spelers.Add(speler);
                 
-                for (int i = 0; i < game.Bord.GetUpperBound(0); i++)
+                for (int i = 0; i <= game.Bord.GetUpperBound(0); i++)
                 {
-                    for (int j = 0; j < game.Bord.GetUpperBound(1); j++)
+                    for (int j = 0; j <= game.Bord.GetUpperBound(1); j++)
                     {
                         //Create the playing board
                         BordArrayValues bordValues = new BordArrayValues();

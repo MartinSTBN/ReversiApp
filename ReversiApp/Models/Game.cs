@@ -52,6 +52,7 @@ namespace ReversiApp.Models
 
         public bool DoeZet(int rijZet, int kolomZet)
         {
+            neighBourPieces.Clear();
             stukkenTeSlaan.Clear();
             if (ZetMogelijk(rijZet, kolomZet))
             {
@@ -117,6 +118,7 @@ namespace ReversiApp.Models
 
         public bool ZetMogelijk(int rijZet, int kolomZet)
         {
+
             if (rijZet >= 0 && rijZet < 8 || kolomZet >= 0 && kolomZet < 8)
             {
                 //kijkt op de plek vrij is
@@ -144,69 +146,98 @@ namespace ReversiApp.Models
                                     //De eerste de beste neighbor die wordt gevonden
                                     if (Bord[x, y] != AandeBeurt && Bord[x, y] != Kleur.Geen)
                                     {
+                                        Console.WriteLine($"Neighbour gevonden op positie {x} {y} met kleur {Bord[x, y]}");
                                         if (kolomZet == 7 && rijZet > 0 && neighBourNum > 4)
                                         {
                                             neighBourNum++;
                                         }
                                         Console.WriteLine($"Neighbournum = {neighBourNum}");
-                                        bool notEmpty = true;
-                                        int count = 0;
 
-                                        while (notEmpty)
-                                        {
-                                            count++;
-                                            if (x >= 0 && y >= 0 && x < 8 && y < 8)
-                                            {
-                                                if (Bord[x, y] != AandeBeurt && Bord[x, y] != Kleur.Geen)
-                                                {
+                                        NeighbourCheck(neighBourNum, x, y);
 
-                                                    Console.WriteLine($"{Bord[x, y]} x = {x} y = {y}");
-                                                    stukkenTeSlaan.Add($"{x},{y}");
-                                                    if (neighBourNum == 1) { x--; y--; }
-                                                    else if (neighBourNum == 2) { x++; }
-                                                    else if (neighBourNum == 3) { x--; y++; }
-                                                    else if (neighBourNum == 4) { y--; }
-                                                    else if (neighBourNum == 6) { y++; }
-                                                    else if (neighBourNum == 7) { x++; y--; }
-                                                    else if (neighBourNum == 8) { x++; }
-                                                    else if (neighBourNum == 9) { x++; y++; }
 
-                                                }
-                                                else
-                                                {
-
-                                                    notEmpty = false;
-                                                }
-                                            }
-                                            else
-                                            {
-                                                Console.WriteLine("Zet niet mogelijk");
-                                                return false;
-                                            }
-                                        } //end while
-                                        Console.WriteLine(rijZet + " beginwaarde");
-                                        Console.WriteLine(y + " eindwaarde");
-                                        if (Bord[x, y] == AandeBeurt)
-                                        {
-                                            Console.WriteLine("Zet mogelijk");
-                                            return true;
-                                        }
-                                        else
-                                        {
-                                            return false;
-                                        }
                                     }
+
                                 }
 
                             }
                             neighBourNum++;
                         }
                     }
+
+                    if (neighBourPieces.Count > 0)
+                    {
+                        foreach (var item in neighBourPieces)
+                        {
+                            foreach (var value in item.NeighBours)
+                            {
+                                stukkenTeSlaan.Add(value);
+                            }
+                        }
+                        Console.WriteLine("Zet mogelijk");
+                        return true;
+                    }
                 }
             }
-            Console.WriteLine("Zet niet mogelijk");
-            return false; ;
+            //Console.WriteLine("Zet niet mogelijk");
+            return false;
         }
+        private List<NeighBour> neighBourPieces = new List<NeighBour>();
+        public void NeighbourCheck(int neighBourNum, int x, int y)
+        {
+            bool notEmpty = true;
+            int count = 0;
+
+            NeighBour neighBour = new NeighBour();
+            neighBour.NeighBours = new List<string>();
+            var previousColor = AandeBeurt;
+            while (notEmpty)
+            {
+
+                Console.WriteLine(Bord[x, y]);
+                if (Bord[x, y] != AandeBeurt && Bord[x, y] != Kleur.Geen)
+                {
+                    Console.WriteLine($"{Bord[x, y]} x = {x} y = {y}");
+                    neighBour.NeighBours.Add($"{x},{y}");
+                    if (neighBourNum == 1) { x--; y--; }
+                    else if (neighBourNum == 2) { x++; }
+                    else if (neighBourNum == 3) { x--; y++; }
+                    else if (neighBourNum == 4) { y--; }
+                    else if (neighBourNum == 6) { y++; }
+                    else if (neighBourNum == 7) { x++; y--; }
+                    else if (neighBourNum == 8) { x++; }
+                    else if (neighBourNum == 9) { x++; y++; }
+                    previousColor = Bord[x, y];
+                    count++;
+                }
+                else
+                {
+                    if (previousColor != AandeBeurt && Bord[x, y] == Kleur.Geen)
+                    {
+                        Console.WriteLine("EEN EN DAN GEEN");
+                        Console.WriteLine("COUNT = " + count);
+                        for (int i = 0; i < count; i++)
+                        {
+                            neighBour.NeighBours.RemoveAt(neighBour.NeighBours.Count - 1);
+                        }
+
+
+                    }
+                    Console.WriteLine("Stop loop");
+                    notEmpty = false;
+
+                }
+            } //end while
+            Console.WriteLine(neighBour.NeighBours.Count);
+            if (neighBour.NeighBours.Count > 0)
+            {
+                neighBourPieces.Add(neighBour);
+            }
+        }
+    }
+    public class NeighBour
+    {
+        public List<string> NeighBours { get; set; }
     }
 }
 
