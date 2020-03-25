@@ -38,32 +38,39 @@ namespace ReversiApp
             var values =  _context.BordArrayValues.Where(item => item.GameID == game.GameID).ToList();
             foreach (var item in values)
             {
-                game.Bord[item.ArrayIndexX, item.ArrayIndexY] = (Kleur)item.Value;
+                game.Bord[item.Row, item.Column] = (Kleur)item.Value;
             }
 
             bool zetMogelijk = game.DoeZet(row, column);
 
             if (zetMogelijk)
             {
-                //Update bord value in database
-                var value = _context.BordArrayValues.FirstOrDefault(item => item.GameID == game.GameID && item.ArrayIndexX == row && item.ArrayIndexY == column);
+                //Update bord stukken te slaan
+                foreach(var item in game.stukkenTeSlaan)
+                {
+                    var splitTeSlaan = item.Split(",");
+                    var rowTeSlaan = Convert.ToInt32(splitTeSlaan[0]);
+                    var columnTeSlaan = Convert.ToInt32(splitTeSlaan[1]);
+                    var value = _context.BordArrayValues.FirstOrDefault(item => item.GameID == game.GameID && item.Row == rowTeSlaan && item.Column == rowTeSlaan);
 
-                if (color == "Wit")
-                {
-                    value.Value = 1;
+                    if (color == "Wit") { value.Value = 1; } else { value.Value = 2; }
+                    _context.Update(value);
+                    await _context.SaveChangesAsync();
                 }
-                else
-                {
-                    value.Value = 2;      
-                }
-                _context.Update(value);
+                
+                //Update bord stuk gezet
+                var gezet = _context.BordArrayValues.FirstOrDefault(item => item.GameID == game.GameID && item.Row == row && item.Column == column);
+                if (color == "Wit") { gezet.Value = 1; } else { gezet.Value = 2; }
+                _context.Update(gezet);
+                await _context.SaveChangesAsync();
+
                 _context.Update(game);
                 await _context.SaveChangesAsync();
-                await Clients.All.SendAsync("ReceiveGameData", cellId, game.AandeBeurt, zetMogelijk);
+                await Clients.All.SendAsync("ReceiveGameData", cellId, game.AandeBeurt, zetMogelijk, game.stukkenTeSlaan);
             }
             else
             {
-                await Clients.All.SendAsync("ReceiveGameData", cellId, game.AandeBeurt, zetMogelijk);
+                await Clients.All.SendAsync("ReceiveGameData", cellId, game.AandeBeurt, zetMogelijk, game.stukkenTeSlaan);
             }
         }
 

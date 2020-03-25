@@ -73,7 +73,7 @@
 
         var connection = new signalR.HubConnectionBuilder().withUrl("/gameHub").build();
 
-        connection.on("ReceiveGameData", function (cellId, color, zetMogelijk) {
+        connection.on("ReceiveGameData", function (cellId, color, zetMogelijk, stukkenTeSlaan) {
             if (zetMogelijk) {
                 if (color == 2) {
                     color = 1;
@@ -82,8 +82,15 @@
                     color = 2;
                     aanDeBeurt = "Wit";
                 }
+ 
                 Game.placeFiche(cellId, color);
                 Game.setTitle(aanDeBeurt);
+
+                for (var i = 0; i < stukkenTeSlaan.length; i++) {
+                    var split = stukkenTeSlaan[i].split(",");
+                    cellId = split[0] + " " + split[1];
+                    Game.placeFiche(cellId, color);
+                }
             } else {
                 alert("ZET NIET MOGELIJK!");
             }
@@ -91,9 +98,17 @@
         });
 
         connection.on("ReceiveBordData", function (values, aanDeBeurt) {
+            function removeElementsByClass(className) {
+                var elements = document.getElementsByClassName(className);
+                while (elements.length > 0) {
+                    elements[0].parentNode.removeChild(elements[0]);
+                }
+            }
+            removeElementsByClass("fiche-wit");
+            removeElementsByClass("fiche-zwart");
             var bordValues = function () {
                 for (var i = 0; i < values.length; i++) {
-                    var id = values[i].arrayIndexX + " " + values[i].arrayIndexY;
+                    var id = values[i].row + " " + values[i].column;
                     var color = values[i].value;
                     var div = document.createElement("div");
                     if (color == 1) {

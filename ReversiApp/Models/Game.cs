@@ -17,7 +17,7 @@ namespace ReversiApp.Models
         [NotMapped]
         public Kleur[,] Bord { get; set; }
         public Kleur AandeBeurt { get; set; }
-        private List<string> stukkenTeSlaan;
+        public List<string> stukkenTeSlaan;
         public Game()
         {
             stukkenTeSlaan = new List<string>();

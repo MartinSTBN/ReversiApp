@@ -94,11 +94,11 @@ namespace ReversiApp.Controllers
             {
                 game = new Game();
                 game.AandeBeurt = Kleur.Zwart;
-                _context.Add(game);
-                await _context.SaveChangesAsync();
                 Hash hash = new Hash();
                 Salt salt = new Salt();
                 game.Token = hash.Create(game.GameID.ToString(), salt.Create());
+                _context.Add(game);
+                await _context.SaveChangesAsync();
 
                 IdentityUser user = await _userManager.GetUserAsync(User);
                 Speler speler = new Speler();
@@ -121,8 +121,8 @@ namespace ReversiApp.Controllers
                     {
                         //Create the playing board
                         BordArrayValues bordValues = new BordArrayValues();
-                        bordValues.ArrayIndexX = i;
-                        bordValues.ArrayIndexY = j;
+                        bordValues.Row = i;
+                        bordValues.Column = j;
                         bordValues.Value = Convert.ToInt32(game.Bord[i,j]);
                         bordValues.GameID = game.GameID;
                         _context.Add(bordValues);
