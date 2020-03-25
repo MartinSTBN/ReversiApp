@@ -33,6 +33,14 @@ namespace ReversiApp
             var split = cellId.Split();
             var row = Convert.ToInt32(split[0]);
             var column = Convert.ToInt32(split[1]);
+
+            //Check if move is possible on new game situation
+            var values =  _context.BordArrayValues.Where(item => item.GameID == game.GameID).ToList();
+            foreach (var item in values)
+            {
+                game.Bord[item.ArrayIndexX, item.ArrayIndexY] = (Kleur)item.Value;
+            }
+
             bool zetMogelijk = game.DoeZet(row, column);
 
             if (zetMogelijk)

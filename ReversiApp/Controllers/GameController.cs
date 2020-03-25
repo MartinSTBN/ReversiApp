@@ -55,7 +55,7 @@ namespace ReversiApp.Controllers
                             speler.Email = user.Email;
                             speler.Password = user.PasswordHash;
                             speler.Token = game.Token;
-                            speler.Kleur = Kleur.Zwart;
+                            speler.Kleur = Kleur.Wit;
                             speler.GameID = game.GameID;
                             game.Speler = speler;
 

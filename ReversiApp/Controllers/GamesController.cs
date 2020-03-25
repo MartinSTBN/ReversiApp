@@ -88,20 +88,17 @@ namespace ReversiApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("GameID,Omschrijving")] Game asd)
+        public async Task<IActionResult> Create([Bind("GameID,Omschrijving")] Game game)
         {
-            Game game = new Game();
             if (ModelState.IsValid)
             {
                 game = new Game();
-                game.Omschrijving = "peop";
-                game.Token = "1";
                 game.AandeBeurt = Kleur.Zwart;
                 _context.Add(game);
                 await _context.SaveChangesAsync();
                 Hash hash = new Hash();
                 Salt salt = new Salt();
-                //game.Token = hash.Create(game.GameID.ToString(), salt.Create());
+                game.Token = hash.Create(game.GameID.ToString(), salt.Create());
 
                 IdentityUser user = await _userManager.GetUserAsync(User);
                 Speler speler = new Speler();
@@ -109,7 +106,7 @@ namespace ReversiApp.Controllers
                 speler.Email = user.Email;
                 speler.Password = user.PasswordHash;
                 speler.Token = game.Token;
-                speler.Kleur = Kleur.Wit;
+                speler.Kleur = Kleur.Zwart;
                 speler.GameID = game.GameID;
 
                 _context.Add(speler);
