@@ -29,7 +29,7 @@ namespace ReversiApp.Controllers
         [Route("Beurt/{id}")]
         public async Task<Kleur> Beurt(int id)
         {
-            var game = _context.Game.Find(id);
+            var game = await _context.Game.Find(id);
             return game.AandeBeurt;
         }
 
