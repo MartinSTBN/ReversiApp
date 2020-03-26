@@ -134,7 +134,7 @@ namespace ReversiApp.Models
                     else if (rijZet == 0) { neighBourNum = 4; }
                     else if (kolomZet == 7) { neighBourNum = 2; }
 
-
+                    var count = 0;
                     for (var x = Math.Max(0, rijZet - 1); x <= Math.Min(rijZet + 1, rowLimit); x++)
                     {
                         for (var y = Math.Max(0, kolomZet - 1); y <= Math.Min(kolomZet + 1, columnLimit); y++)
@@ -151,13 +151,17 @@ namespace ReversiApp.Models
                                         {
                                             neighBourNum++;
                                         }
+                                        else if (count == 0 && kolomZet == 7)
+                                        {
+                                            neighBourNum--;
+                                        }
                                         Console.WriteLine($"Neighbournum = {neighBourNum}");
 
                                         NeighbourCheck(neighBourNum, x, y);
 
 
                                     }
-
+                                    count++;
                                 }
 
                             }
@@ -200,7 +204,7 @@ namespace ReversiApp.Models
                     Console.WriteLine($"{Bord[x, y]} x = {x} y = {y}");
                     neighBour.NeighBours.Add($"{x},{y}");
                     if (neighBourNum == 1) { x--; y--; }
-                    else if (neighBourNum == 2) { x++; }
+                    else if (neighBourNum == 2) { x--; }
                     else if (neighBourNum == 3) { x--; y++; }
                     else if (neighBourNum == 4) { y--; }
                     else if (neighBourNum == 6) { y++; }
