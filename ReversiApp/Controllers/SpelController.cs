@@ -25,13 +25,13 @@ namespace ReversiApp.Controllers
             game = new Game();
         }
 
-        [HttpGet]
+        /*[HttpGet]
         [Route("Beurt/{id}")]
         public async Task<Kleur> Beurt(int id)
         {
             var game = await _context.Game.Find(id);
             return game.AandeBeurt;
-        }
+        }*/
 
     }
 }
