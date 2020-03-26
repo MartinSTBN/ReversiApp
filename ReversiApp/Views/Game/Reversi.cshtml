@@ -69,9 +69,14 @@
 <link rel="stylesheet" href="~/css/style.min.css" />
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/handlebars.min-v4.7.3.js"></script>
+<script src="~/js/templates.js"></script>
 <script>
     $(function () {
         "use strict";
+
+        var template = Game.getTemplate('feedbackWidget');
+        console.log(template);
 
         var aanDeBeurt = '@Model.AandeBeurt';
 

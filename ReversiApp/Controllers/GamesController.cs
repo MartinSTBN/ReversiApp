@@ -91,7 +91,7 @@ namespace ReversiApp.Controllers
         public async Task<IActionResult> Create([Bind("GameID,Omschrijving")] Game game)
         {
             if (ModelState.IsValid)
-            {
+            {   
                 game.AandeBeurt = Kleur.Zwart;
                 Hash hash = new Hash();
                 Salt salt = new Salt();
