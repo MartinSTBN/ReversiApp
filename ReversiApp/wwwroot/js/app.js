@@ -228,25 +228,28 @@ Game.Reversi = function (url) {
   var privateInit = function privateInit() {};
 
   var placeFiche = function placeFiche(id, kleur) {
-    function removeElementsByClass(className) {
-      var elements = document.getElementsByClassName(className);
-      var parentId = elements[0].parentNode.id;
-
-      if (parentId == id) {
-        elements[0].remove();
-      }
+    function removeElementsByClass(className) {// var elements = document.getElementsByClassName(className);
+      // var parentId = elements[0].parentNode.id;
+      // console.log("Parent id = " + parentId + " Id = " + id);
+      // if (parentId == id) {
+      //     elements[0].remove();
+      // }
     }
 
     var div = document.createElement("div");
 
     if (kleur == 1) {
-      removeElementsByClass("fiche-zwart");
+      //removeElementsByClass("fiche-zwart");
+      // var td = document.getElementById(id);
+      // list.removeChild(td.childNodes[0]);
       div.className = "fiche-wit";
       div.id = id;
     }
 
     if (kleur == 2) {
-      removeElementsByClass("fiche-wit");
+      //removeElementsByClass("fiche-wit");
+      // var td = document.getElementById(id);
+      // list.removeChild(td.childNodes[0]);
       div.className = "fiche-zwart";
       div.id = id;
     }

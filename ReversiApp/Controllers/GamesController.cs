@@ -115,15 +115,26 @@ namespace ReversiApp.Controllers
                 game.Spelers = new List<Speler>();
                 game.Spelers.Add(speler);
                 
-                for (int i = 0; i <= game.Bord.GetUpperBound(0); i++)
+                for (int i = 0; i < game.Bord.GetUpperBound(0); i++)
                 {
-                    for (int j = 0; j <= game.Bord.GetUpperBound(1); j++)
+                    for (int j = 0; j < game.Bord.GetUpperBound(1); j++)
                     {
                         //Create the playing board
                         BordArrayValues bordValues = new BordArrayValues();
-                        bordValues.Row = i;
-                        bordValues.Column = j;
-                        bordValues.Value = Convert.ToInt32(game.Bord[i,j]);
+                        if(i == 3 && j == 4)
+                        {
+                            bordValues.Row = i;
+                            bordValues.Column = j;
+                            bordValues.Value = 1;
+                        }
+                        else
+                        {
+                            bordValues.Row = i;
+                            bordValues.Column = j;
+                            bordValues.Value = Convert.ToInt32(game.Bord[i, j]);
+                        }
+                        
+                        
                         bordValues.GameID = game.GameID;
                         _context.Add(bordValues);
                         await _context.SaveChangesAsync();
