@@ -10,7 +10,6 @@
     <div class="col-md-4">
         <section>
             <form id="account" method="post">
-                <h4>Use a local account to log in.</h4>
                 <hr />
                 <div asp-validation-summary="All" class="text-danger"></div>
                 <div class="form-group">
@@ -23,10 +22,10 @@
                     <input asp-for="Input.Password" class="form-control" />
                     <span asp-validation-for="Input.Password" class="text-danger"></span>
                 </div>
-                <!--
-        <div class="g-recaptcha" data-sitekey="6LdnBuMUAAAAAOvctaZUCJgAWoO5g5JPx7o1GT2Z"></div>
+              
+        <div class="g-recaptcha" data-sitekey="6LdnBuMUAAAAAOvctaZUCJgAWoO5g5JPx7o1GT2Z" hidden></div>
 
-    -->
+    
 
                 <div class="form-group">
                     <div class="checkbox">
@@ -50,7 +49,7 @@
             </form>
         </section>
     </div>
-    <div class="col-md-6 col-md-offset-2">
+    <div class="col-md-6 col-md-offset-2" hidden>
         <section>
             <h4>Use another service to log in.</h4>
             <hr />

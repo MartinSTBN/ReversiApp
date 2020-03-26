@@ -97,7 +97,7 @@ namespace ReversiApp
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Games}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
                 endpoints.MapHub<GameHub>("/gameHub");
             });

@@ -92,7 +92,6 @@ namespace ReversiApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                game = new Game();
                 game.AandeBeurt = Kleur.Zwart;
                 Hash hash = new Hash();
                 Salt salt = new Salt();
@@ -121,20 +120,9 @@ namespace ReversiApp.Controllers
                     {
                         //Create the playing board
                         BordArrayValues bordValues = new BordArrayValues();
-                        if(i == 3 && j == 4)
-                        {
-                            bordValues.Row = i;
-                            bordValues.Column = j;
-                            bordValues.Value = 1;
-                        }
-                        else
-                        {
-                            bordValues.Row = i;
-                            bordValues.Column = j;
-                            bordValues.Value = Convert.ToInt32(game.Bord[i, j]);
-                        }
-                        
-                        
+                        bordValues.Row = i;
+                        bordValues.Column = j;
+                        bordValues.Value = Convert.ToInt32(game.Bord[i,j]);
                         bordValues.GameID = game.GameID;
                         _context.Add(bordValues);
                         await _context.SaveChangesAsync();
