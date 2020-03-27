@@ -21,10 +21,10 @@ namespace ReversiApp.Models
         public Game()
         {
             stukkenTeSlaan = new List<string>();
-            Bord = new Kleur[11, 11];
-            for (int row = 0; row < 11; row++)
+            Bord = new Kleur[10, 10];
+            for (int row = 0; row < 10; row++)
             {
-                for (int column = 0; column < 11; column++)
+                for (int column = 0; column < 10; column++)
                 {
                     if (row == 4 && column == 4 || row == 5 && column == 5)
                     {
