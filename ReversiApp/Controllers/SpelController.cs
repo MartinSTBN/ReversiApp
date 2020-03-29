@@ -28,29 +28,86 @@ namespace ReversiApp.Controllers
         }
 
         [HttpGet]
-        [Route("zetmogelijk/{id}")]
+        [Route("beurt/{id}")]
         public async Task<string> Beurt(int id)
         {
-            var game = _context.Game.Find(id);
-            game.AandeBeurt = Kleur.Zwart;
-            _context.Update(game);
-            await _context.SaveChangesAsync();
-
-            JArray array = new JArray();
-            array.Add("Manual text");
-            array.Add(new DateTime(2000, 5, 23));
-
-            JArray anotherArray = new JArray();
-            anotherArray.Add("Manual text");
-            anotherArray.Add(new DateTime(2000, 5, 23));
-
-            JObject o = new JObject();
-            o["MyArray"] = array;
-            o["anotherArray"] = array;
-
-            string json = o.ToString();
+            var game = await _context.Game.FindAsync(id);
+            var beurt = game.AandeBeurt;
+            string json = JsonConvert.SerializeObject(beurt, Formatting.Indented);
 
             return json;
+        }
+
+        [HttpGet]
+        [Route("aantalbezet/{id}")]
+        public async Task<string> AantalBezet(int id)
+        {
+            Game game = await _context.Game.FindAsync(id);
+
+            var values = _context.BordArrayValues.Where(item => item.GameID == game.GameID).ToList();
+            var aantalLeeg = 0;
+            var aantalWit = 0;
+            var aantalZwart = 0;
+            foreach (var item in values)
+            {
+                if(item.Value == 0){ aantalLeeg++; }
+                if (item.Value == 1) { aantalWit++; }
+                if (item.Value == 2) { aantalZwart++; }
+            }
+            int[] aantallen = new int[3];
+            aantallen[0] = aantalLeeg;
+            aantallen[1] = aantalZwart;
+            aantallen[2] = aantalWit;
+            string json = JsonConvert.SerializeObject(aantallen, Formatting.Indented);
+
+            return json;
+        }
+
+        [HttpGet]
+        [Route("doezet/{id}/{speler}/{cellId}")]
+        public async Task<string> Zet(int id, string speler, int cellId)
+        {
+            Game game = await _context.Game.FindAsync(id);
+            int row = cellId / 10;
+            int column = cellId % 10;
+
+            //Check if move is possible on new game situation
+            var values = _context.BordArrayValues.Where(item => item.GameID == game.GameID).ToList();
+            foreach (var item in values)
+            {
+                game.Bord[item.Row, item.Column] = (Kleur)item.Value;
+            }
+            bool zetMogelijk = game.DoeZet(row, column);
+
+            if (zetMogelijk)
+            {
+                //Update bord stukken te slaan
+                foreach (var item in game.stukkenTeSlaan)
+                {
+                    var splitTeSlaan = item.Split(",");
+                    var rowTeSlaan = Convert.ToInt32(splitTeSlaan[0]);
+                    var columnTeSlaan = Convert.ToInt32(splitTeSlaan[1]);
+                    var value = _context.BordArrayValues.FirstOrDefault(item => item.GameID == game.GameID && item.Row == rowTeSlaan && item.Column == columnTeSlaan);
+
+                    if (speler == "Wit") { value.Value = 1; } else if (speler == "Zwart") { value.Value = 2; }
+                    _context.Update(value);
+                    await _context.SaveChangesAsync();
+                }
+
+                //Update bord stuk gezet
+                var gezet = _context.BordArrayValues.FirstOrDefault(item => item.GameID == game.GameID && item.Row == row && item.Column == column);
+                if (speler == "Wit") { gezet.Value = 1; } else if (speler == "Zwart") { gezet.Value = 2; }
+                _context.Update(gezet);
+                await _context.SaveChangesAsync();
+
+                _context.Update(game);
+                await _context.SaveChangesAsync();
+                string json = JsonConvert.SerializeObject(game.stukkenTeSlaan, Formatting.Indented);
+                return json;
+            }
+            string empty = JsonConvert.SerializeObject(zetMogelijk, Formatting.Indented);
+            return empty;
+
         }
 
 

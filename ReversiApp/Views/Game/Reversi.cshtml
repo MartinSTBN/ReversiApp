@@ -4,13 +4,10 @@
     ViewData["Title"] = "Reversi";
 }
 
-@if (Model.Spelers.Count < 2)
-{
-    <form asp-action="Delete" asp-controller="Games" asp-route-id="@Model.GameID">
-        <input type="hidden" asp-for="GameID" />
-        <input type="submit" value="Leave game room" class="btn btn-danger" />
-    </form>
-}
+<form asp-action="Delete" asp-controller="Games" asp-route-id="@Model.GameID">
+    <input type="hidden" asp-for="GameID" />
+    <input type="submit" value="Leave game room" class="btn btn-danger" />
+</form>
 
 <h1>Room: @Model.Omschrijving</h1>
 
@@ -19,53 +16,13 @@
     <p>Player @speler.Kleur : @speler.Email</p>
 }
 <p id="AanDeBeurt"></p>
-<div id="catPic" style="float:right; margin-left: 150px;"></div>
-<div id="speelBord" style="float:left"></div>
 
-<div class="container" hidden>
-    <div class="row">&nbsp;</div>
-    <div class="row">
-        <div class="col-2">User</div>
-        <div class="col-4"><input type="text" id="userInput" /></div>
-    </div>
-    <div class="row">
-        <div class="col-2">Message</div>
-        <div class="col-4"><input type="text" id="messageInput" /></div>
-    </div>
-    <div class="row">&nbsp;</div>
-    <div class="row">
-        <div class="col-6">
-            <input type="button" id="sendButton" value="Send Message" />
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-12">
-        <hr />
-    </div>
-</div>
-<div class="row">
-    <div class="col-6">
-        <ul id="messagesList"></ul>
-    </div>
-</div>
+<!--
+    <div id="catPic" style="float:right; margin-left: 150px;"></div>
+-->
 
-<table id="Bord" hidden>
-
-    @for (var i = 0; i < Model.Bord.GetUpperBound(0); i++)
-    {
-        <tr></tr>
-        @for (var j = 0; j < Model.Bord.GetUpperBound(1); j++)
-        {
-            if (i != 0 & j != 0 & i != 9 & j != 9)
-            {
-                <td class="cell" id="@i @j"></td>
-            }
-
-        }
-    }
-
-</table>
+<div id="speelBord" style="float: left"></div>
+<canvas id="aantalBezet" height="300vw" width="500vw"></canvas>
 
 <script src="~/js/app.js" asp-append-version="true"></script>
 <link rel="stylesheet" href="~/css/style.min.css" />
@@ -73,111 +30,55 @@
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
 <script src="~/js/handlebars.min-v4.7.3.js"></script>
 <script src="~/js/templates.js"></script>
+<script src="~/js/vendor.js"></script>
 <script>
     $(function () {
         "use strict";
-
         var aanDeBeurt = '@Model.AandeBeurt';
+        var speler = '@Model.Speler.Kleur';
+        var connection = new signalR.HubConnectionBuilder().withUrl("/api/spel").build();
 
-        var connection = new signalR.HubConnectionBuilder().withUrl("/gameHub").build();
-
-        connection.on("ReceiveGameData", function (cellId, color, zetMogelijk, stukkenTeSlaan) {
-
-            if (zetMogelijk) {
-                if (color == 2) {
-                    color = 1;
-                    aanDeBeurt = "Zwart"
-                } else {
-                    color = 2;
-                    aanDeBeurt = "Wit";
-                }
-
-                Game.placeFiche(cellId, color);
-                Game.setTitle(aanDeBeurt);
-
-
-                for (var i = 0; i < stukkenTeSlaan.length; i++) {
-                    var split = stukkenTeSlaan[i].split(",");
-                    cellId = split[0] + " " + split[1];
-                    var td = document.getElementById(cellId);
-                    td.childNodes[0].remove();
-                    Game.placeFiche(cellId, color);
-                    console.log("Te slaan > " + cellId + " naar kleur " + color);
-                }
-            } else {
-                //console.log("Zet niet mogelijk!");
-            }
-
-        });
-
-        connection.on("ReceiveBordData", function (values, aanDeBeurt) {
-            function removeElementsByClass(className) {
-                var elements = document.getElementsByClassName(className);
-                while (elements.length > 0) {
-                    elements[0].parentNode.removeChild(elements[0]);
-                }
-            }
-
-            removeElementsByClass("fiche-wit");
-            removeElementsByClass("fiche-zwart");
-
-            var bordValues = function () {
-                for (var i = 0; i < values.length; i++) {
-
-                    var id = values[i].row + " " + values[i].column;
-
-                    var color = values[i].value;
-
-                    var div = document.createElement("div");
-
-                    if (color != 0) {
-
-                        if (color == 1) {
-                            div.className = "fiche-wit";
-                        }
-                        if (color == 2) {
-                            div.className = "fiche-zwart";
-                        }
-
-                        document.getElementById(id).appendChild(div);
-                    }
-                }
-            }
-            bordValues();
-            if (aanDeBeurt == 1) {
-                aanDeBeurt = "Wit";
-            } else {
-                aanDeBeurt = "Zwart";
-            }
-            Game.setTitle(aanDeBeurt);
-
-            var url = "https://api.thecatapi.com/v1/images/search";
+        connection.on("ReceiveGameData", function (speler, cellId, result) {
+            Game.updateBoard(result, speler, cellId);
+            Game.setTitle(speler);
             //Game.processData();
         });
 
-        connection.on("Test", function (row, column, zetMogelijk) {
-            console.log(row + " " + column + " "+ zetMogelijk);
+        Game.createBoard().then(function () {
+            connection.start().then(function () {
+                Game.init('production');
+                Game.setTitle(speler);
+                $(".cell").on("click", function () {
+                    const beurtUrl = window.location.origin + "/api/spel/beurt/" + id;
+                    Game.Data.get(beurtUrl).then(r => {
+                        var aanDeBeurt = JSON.parse(r);
 
-        });
+                        if (aanDeBeurt == 2) { aanDeBeurt = "Zwart" } else if (aanDeBeurt == 1) { aanDeBeurt = "Wit" }
+                        console.log(speler + "/" + aanDeBeurt);
+                        if (aanDeBeurt == speler) {
+                            Game.doeZet(speler, this.id).then(r => {
+                                let result = JSON.parse(r);
+                                if (!result) { }
+                                else {
+                                    connection.invoke("SendGameData", speler, this.id, r).catch(function (err) {
+                                        return console.error(err.toString());
+                                    });
+                                }
+                            })
 
-        connection.start().then(function () {
-            Game.init('production');
-            
-            connection.invoke("GetBordData", "@Model.GameID").catch(function (err) {
+                        } else {
+                            console.log(aanDeBeurt + " is aan de beurt");
+                        }
+                    })
+                });
+            }).catch(function (err) {
                 return console.error(err.toString());
             });
-            $(".cell").on("click", function () {
-                if (aanDeBeurt == '@Model.Speler.Kleur') {
-                    connection.invoke("SendGameData", this.id, "@Model.Speler.Kleur", "@Model.GameID").catch(function (err) {
-                        return console.error(err.toString());
-                    });
-                } else {
-                    //alert(aanDeBeurt + ' is aan de beurt');
-                }
-            });
-        }).catch(function (err) {
-            return console.error(err.toString());
         });
+
+
+
+
 
     });
 

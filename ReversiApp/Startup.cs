@@ -99,7 +99,7 @@ namespace ReversiApp
                     name: "default",
                     pattern: "{controller=Games}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
-                endpoints.MapHub<GameHub>("/gameHub");
+                endpoints.MapHub<GameHub>("/api/spel");
             });
         }
     }
