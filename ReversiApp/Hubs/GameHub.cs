@@ -13,7 +13,6 @@ namespace ReversiApp
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
-        private Game game;
 
         public GameHub(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {

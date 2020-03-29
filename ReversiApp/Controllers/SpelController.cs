@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using ReversiApp.Data;
@@ -116,7 +117,7 @@ namespace ReversiApp.Controllers
         public async Task<string> State(int id)
         {
             var game = _context.Game.Find(id);
-            var values = _context.BordArrayValues.Where(item => item.GameID == game.GameID).ToList();
+            var values = await _context.BordArrayValues.Where(item => item.GameID == game.GameID).ToListAsync();
 
             var dict = new Dictionary<string, List<Template>>();
             Template t = new Template();
