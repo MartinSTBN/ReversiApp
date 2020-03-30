@@ -29,5 +29,10 @@ namespace ReversiApp
             await Clients.All.SendAsync("ReceiveGameData", speler, cellId, result);
         }
 
+        public async Task SendSpelers(string spelers)
+        {
+            await Clients.All.SendAsync("ReceiveSpelers", spelers);
+        }
+
     }
 }

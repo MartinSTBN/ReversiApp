@@ -51,9 +51,12 @@ namespace ReversiApp.Controllers
             var aantalZwart = 0;
             foreach (var item in values)
             {
-                if(item.Value == 0){ aantalLeeg++; }
-                if (item.Value == 1) { aantalWit++; }
-                if (item.Value == 2) { aantalZwart++; }
+                if(item.Row == 0 || item.Column == 0 || item.Row == 9 || item.Column == 9) { } else
+                {
+                    if (item.Value == 0) { aantalLeeg++; }
+                    if (item.Value == 1) { aantalWit++; }
+                    if (item.Value == 2) { aantalZwart++; }
+                }   
             }
             int[] aantallen = new int[3];
             aantallen[0] = aantalLeeg;
@@ -75,6 +78,28 @@ namespace ReversiApp.Controllers
             values[1] = game.aantalGeslagenDoorZwart;
     
             string json = JsonConvert.SerializeObject(values, Formatting.Indented);
+
+            return json;
+        }
+
+        [HttpGet]
+        [Route("spelers/{id}")]
+        public async Task<string> Spelers(int id)
+        {
+            Game game = await _context.Game.FindAsync(id);
+            var spelers = await _context.Speler.Where(m => m.GameID == game.GameID).ToListAsync();
+            var dict = new Dictionary<string, List<string>>();
+
+            var count = 0;
+            foreach (var speler in spelers)
+            {
+                List<string> values = new List<string>();
+                values.Add(speler.Email);
+                values.Add(Convert.ToInt32(speler.Kleur).ToString());
+                dict.Add(count.ToString(), values);
+                count++;
+            }
+            string json = JsonConvert.SerializeObject(dict, Formatting.Indented);
 
             return json;
         }

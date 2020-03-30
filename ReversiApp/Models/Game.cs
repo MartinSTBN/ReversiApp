@@ -121,7 +121,7 @@ namespace ReversiApp.Models
         public bool ZetMogelijk(int rijZet, int kolomZet)
         {
 
-            if (rijZet >= 0 && rijZet < 8 || kolomZet >= 0 && kolomZet < 8)
+            if (rijZet >= 0 && rijZet <= 8 || kolomZet >= 0 && kolomZet <= 8)
             {
                 //kijkt op de plek vrij is
                 if (Bord[rijZet, kolomZet] == Kleur.Geen)
@@ -130,12 +130,6 @@ namespace ReversiApp.Models
                     var rowLimit = Bord.GetLength(0) - 1;
                     var columnLimit = Bord.GetLength(1) - 1;
                     int neighBourNum = 1;
-                    /*if (rijZet == 0 && kolomZet == 7) { neighBourNum = 5; }
-                    else if (rijZet == 7 && kolomZet == 7) { neighBourNum = 1; }
-                    else if (rijZet == 0 && kolomZet == 0) { neighBourNum = 6; }
-                    else if (rijZet == 7 && kolomZet == 0) { neighBourNum = 2; }
-                    else if (rijZet == 0) { neighBourNum = 4; }
-                    else if (kolomZet == 7) { neighBourNum = 2; }*/
                     var count = 0;
                     Console.WriteLine(neighBourNum);
                     for (var x = Math.Max(0, rijZet - 1); x <= Math.Min(rijZet + 1, rowLimit); x++)
@@ -145,7 +139,7 @@ namespace ReversiApp.Models
                             Console.WriteLine($"Neighbournum = {neighBourNum}");
                             if (x != rijZet || y != kolomZet)
                             {
-                                if (x >= 0 && y >= 0 && x < 8 && y < 8)
+                                if (x >= 0 && y >= 0 && x <= 8 && y <= 8)
                                 {
                                     Console.WriteLine($"{x},{y} = {Bord[x, y]}");
 
@@ -153,16 +147,6 @@ namespace ReversiApp.Models
                                     if (Bord[x, y] != AandeBeurt && Bord[x, y] != Kleur.Geen)
                                     {
                                         Console.WriteLine($"Neighbour gevonden op positie {x} {y} met kleur {Bord[x, y]}");
-
-                                        /*if (kolomZet == 7 && rijZet > 0 && neighBourNum > 4 
-                                            || kolomZet == 0 && rijZet == 7 && neighBourNum > 4)
-                                        {
-                                            neighBourNum++;
-                                        }else if (count == 0 && kolomZet == 7
-                                            || kolomZet == 0 && rijZet == 0 && neighBourNum == 7) 
-                                        {
-                                            neighBourNum--;
-                                        }*/
                                         Console.WriteLine($"{x} {y}");
                                         Console.WriteLine($"Neighbournum = {neighBourNum}");
 
