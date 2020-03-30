@@ -23,6 +23,7 @@
 
 <div id="speelBord" style="float: left"></div>
 <canvas id="aantalBezet" height="300vw" width="500vw"></canvas>
+<canvas id="aantalVeroverd" height="300vw" width="500vw"></canvas>
 
 <script src="~/js/app.js" asp-append-version="true"></script>
 <link rel="stylesheet" href="~/css/style.min.css" />
@@ -31,6 +32,7 @@
 <script src="~/js/handlebars.min-v4.7.3.js"></script>
 <script src="~/js/templates.js"></script>
 <script src="~/js/vendor.js"></script>
+
 <script>
     $(function () {
         "use strict";
@@ -40,6 +42,12 @@
 
         connection.on("ReceiveGameData", function (speler, cellId, result) {
             Game.updateBoard(result, speler, cellId);
+            if (speler == "Wit") {
+                speler = "Zwart"
+            }
+            if (speler == "Zwart") {
+                speler = "Wit";
+            }
             Game.setTitle(speler);
             //Game.processData();
         });
@@ -47,13 +55,14 @@
         Game.createBoard().then(function () {
             connection.start().then(function () {
                 Game.init('production');
-                Game.setTitle(speler);
+                
                 $(".cell").on("click", function () {
                     const beurtUrl = window.location.origin + "/api/spel/beurt/" + id;
                     Game.Data.get(beurtUrl).then(r => {
                         var aanDeBeurt = JSON.parse(r);
 
                         if (aanDeBeurt == 2) { aanDeBeurt = "Zwart" } else if (aanDeBeurt == 1) { aanDeBeurt = "Wit" }
+                        Game.setTitle(aanDeBeurt);
                         console.log(speler + "/" + aanDeBeurt);
                         if (aanDeBeurt == speler) {
                             Game.doeZet(speler, this.id).then(r => {
