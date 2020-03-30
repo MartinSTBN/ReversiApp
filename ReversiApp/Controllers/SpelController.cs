@@ -65,6 +65,21 @@ namespace ReversiApp.Controllers
         }
 
         [HttpGet]
+        [Route("aantalgeslagen/{id}")]
+        public async Task<string> AantalGeslagen(int id)
+        {
+            Game game = await _context.Game.FindAsync(id);
+
+            int[] values = new int[2];
+            values[0] = game.aantalGeslagenDoorWit;
+            values[1] = game.aantalGeslagenDoorZwart;
+    
+            string json = JsonConvert.SerializeObject(values, Formatting.Indented);
+
+            return json;
+        }
+
+        [HttpGet]
         [Route("doezet/{id}/{speler}/{cellId}")]
         public async Task<string> Zet(int id, string speler, int cellId)
         {
@@ -100,6 +115,9 @@ namespace ReversiApp.Controllers
                 if (speler == "Wit") { gezet.Value = 1; } else if (speler == "Zwart") { gezet.Value = 2; }
                 _context.Update(gezet);
                 await _context.SaveChangesAsync();
+
+                if (speler == "Wit") { game.aantalGeslagenDoorWit = game.stukkenTeSlaan.Count + game.aantalGeslagenDoorWit; } 
+                else if (speler == "Zwart") { game.aantalGeslagenDoorZwart = game.stukkenTeSlaan.Count + game.aantalGeslagenDoorZwart; }
 
                 _context.Update(game);
                 await _context.SaveChangesAsync();

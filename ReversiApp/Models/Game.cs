@@ -17,6 +17,8 @@ namespace ReversiApp.Models
         [NotMapped]
         public Kleur[,] Bord { get; set; }
         public Kleur AandeBeurt { get; set; }
+        public int aantalGeslagenDoorWit { get; set; }
+        public int aantalGeslagenDoorZwart { get; set; }
         public List<string> stukkenTeSlaan;
         public Game()
         {
