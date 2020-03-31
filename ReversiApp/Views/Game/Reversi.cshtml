@@ -102,6 +102,7 @@
                     Game.setTitle(aanDeBeurt);
                 }).then(function () {
                     Game.getSpelers().then(r => {
+                        playState();
                         connection.invoke("SendSpelers", r).catch(function (err) {
                             return console.error(err.toString());
                         });
@@ -118,9 +119,7 @@
                         });
                     })
                 }
-                var state = window.setInterval(playState, 2000);
-
-                
+               
 
                 //Plaatst een fiche en update de game state
                 $(".cell").on("click", function () {
@@ -132,6 +131,7 @@
                                     connection.invoke("SendGameData", speler, this.id, r).catch(function (err) {
                                         return console.error(err.toString());
                                     });
+                                    playState();
                                 }
                             })
 
