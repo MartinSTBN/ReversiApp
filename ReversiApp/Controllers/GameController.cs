@@ -88,7 +88,11 @@ namespace ReversiApp.Controllers
             return View(game);
         }
 
-
+        [HttpPost("/Game/Reversi/{id}/{name}")]
+        public IActionResult Reversi(int id, string name)
+        {
+            return View();
+        }
 
 
     }

@@ -45,8 +45,8 @@ namespace ReversiApp.Areas.Identity.Pages.Account
         public class InputModel
         {
             [Required]
-            [EmailAddress]
-            public string Email { get; set; }
+            [Display(Name = "Username/Email")]
+            public string UserName { get; set; }
 
             [Required]
             [DataType(DataType.Password)]
@@ -96,7 +96,14 @@ namespace ReversiApp.Areas.Identity.Pages.Account
                 }
                 else
                 {
-                    var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+                    var userName = Input.UserName;
+                var userCheckIfEmail = _userManager.Users.FirstOrDefault(p => p.Email == Input.UserName);
+                if (userCheckIfEmail != null)
+                {
+                    userName = userCheckIfEmail.UserName;
+                }
+
+                var result = await _signInManager.PasswordSignInAsync(userName, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                     if (result.Succeeded)
                     {
                         _logger.LogInformation("User logged in.");

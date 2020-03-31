@@ -28,6 +28,64 @@ namespace ReversiApp.Controllers
             game = new Game();
         }
 
+        [HttpPost]
+        [Route("joinstatus/{id}")]
+        public async Task<string> SetAcceptStatus(int id, [FromForm]string status)
+        {
+
+            var game = await _context.Game.FindAsync(id);
+
+            game.JoinAccepteerStatus = "Akkoord";
+
+            _context.Update(game);
+            await _context.SaveChangesAsync();
+
+            string json = JsonConvert.SerializeObject(game.JoinAccepteerStatus, Formatting.Indented);
+
+            return json;
+        }
+
+        [HttpGet]
+        [Route("joinstatus/{id}")]
+        public async Task<string> GetAcceptStatus(int id)
+        {
+
+            var game = await _context.Game.FindAsync(id);
+
+            string json = JsonConvert.SerializeObject(game.JoinAccepteerStatus, Formatting.Indented);
+
+            return json;
+        }
+
+        [HttpPost]
+        [Route("join/{id}")]
+        public async Task<string> JoinGame(int id, [FromForm]string email)
+        {
+
+            var game = await _context.Game.FindAsync(id);
+            var user = await _userManager.Users.FirstOrDefaultAsync(r => r.Email == email);
+            game.SpelerDieWiltJoinen = user.UserName;
+
+            _context.Update(game);
+            await _context.SaveChangesAsync();
+
+            string json = JsonConvert.SerializeObject(game.SpelerDieWiltJoinen, Formatting.Indented);
+
+            return json;
+        }
+
+        [HttpGet]
+        [Route("join/{id}")]
+        public async Task<string> GetJoinStatus(int id)
+        {
+
+            var game = await _context.Game.FindAsync(id);
+
+            string json = JsonConvert.SerializeObject(game.SpelerDieWiltJoinen, Formatting.Indented);
+
+            return json;
+        }
+
         [HttpGet]
         [Route("beurt/{id}")]
         public async Task<string> Beurt(int id)

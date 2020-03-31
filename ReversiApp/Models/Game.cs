@@ -19,6 +19,8 @@ namespace ReversiApp.Models
         public Kleur AandeBeurt { get; set; }
         public int aantalGeslagenDoorWit { get; set; }
         public int aantalGeslagenDoorZwart { get; set; }
+        public string SpelerDieWiltJoinen { get; set; }
+        public string JoinAccepteerStatus { get; set; }
         public List<string> stukkenTeSlaan;
         public Game()
         {

@@ -26,10 +26,12 @@ namespace ReversiApp.Controllers
         public async Task<IActionResult> Index()
         {
             IdentityUser user = await _userManager.GetUserAsync(User);
+            
 
             //Checks if user is logged in
             if (user != null)
             {
+                ViewBag.Email = user.Email;
                 var speler = await _context.Speler.FindAsync(user.Id);
                 //Checks if user is already in game
                 if (speler != null)
@@ -122,7 +124,19 @@ namespace ReversiApp.Controllers
                         BordArrayValues bordValues = new BordArrayValues();
                         bordValues.Row = i;
                         bordValues.Column = j;
-                        bordValues.Value = Convert.ToInt32(game.Bord[i,j]);
+                        /*if (i == 4 && j == 4 || i == 4 && j == 3)
+                        {
+                            
+                            bordValues.Value = 2;
+                        }else if(i == 5 && j == 3 || i == 5 && j == 4)
+                        {
+                            bordValues.Value = 1;
+                        }
+                        else
+                        {
+                            bordValues.Value = Convert.ToInt32(game.Bord[i,j]);
+                        }*/
+                        bordValues.Value = Convert.ToInt32(game.Bord[i, j]);
                         bordValues.GameID = game.GameID;
                         _context.Add(bordValues);
                         await _context.SaveChangesAsync();

@@ -1,30 +1,5 @@
 this["spa_templates"] = this["spa_templates"] || {};
 this["spa_templates"]["templates"] = this["spa_templates"]["templates"] || {};
-this["spa_templates"]["templates"]["catpic"] = this["spa_templates"]["templates"]["catpic"] || {};
-this["spa_templates"]["templates"]["catpic"]["body"] = Handlebars.template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
-    var helper, lookupProperty = container.lookupProperty || function(parent, propertyName) {
-        if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
-          return parent[propertyName];
-        }
-        return undefined
-    };
-
-  return "<img width=\"250\" height=\"250\" alt=\"Vitra\" name=\"large\" src=\""
-    + container.escapeExpression(((helper = (helper = lookupProperty(helpers,"url") || (depth0 != null ? lookupProperty(depth0,"url") : depth0)) != null ? helper : container.hooks.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"url","hash":{},"data":data,"loc":{"start":{"line":1,"column":60},"end":{"line":1,"column":67}}}) : helper)))
-    + "\" style=\"display: block;\">";
-},"useData":true});
-Handlebars.registerPartial("fiche", Handlebars.template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
-    var helper, lookupProperty = container.lookupProperty || function(parent, propertyName) {
-        if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
-          return parent[propertyName];
-        }
-        return undefined
-    };
-
-  return "<div class=\""
-    + container.escapeExpression(((helper = (helper = lookupProperty(helpers,"kleur") || (depth0 != null ? lookupProperty(depth0,"kleur") : depth0)) != null ? helper : container.hooks.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"kleur","hash":{},"data":data,"loc":{"start":{"line":1,"column":12},"end":{"line":1,"column":21}}}) : helper)))
-    + "\">\r\n    \r\n </div>";
-},"useData":true}));
 this["spa_templates"]["templates"]["feedbackWidget"] = this["spa_templates"]["templates"]["feedbackWidget"] || {};
 this["spa_templates"]["templates"]["feedbackWidget"]["body"] = Handlebars.template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
     var helper, lookupProperty = container.lookupProperty || function(parent, propertyName) {
@@ -38,6 +13,18 @@ this["spa_templates"]["templates"]["feedbackWidget"]["body"] = Handlebars.templa
     + container.escapeExpression(((helper = (helper = lookupProperty(helpers,"test") || (depth0 != null ? lookupProperty(depth0,"test") : depth0)) != null ? helper : container.hooks.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"test","hash":{},"data":data,"loc":{"start":{"line":2,"column":4},"end":{"line":2,"column":12}}}) : helper)))
     + "\r\n </section>";
 },"useData":true});
+Handlebars.registerPartial("fiche", Handlebars.template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
+    var helper, lookupProperty = container.lookupProperty || function(parent, propertyName) {
+        if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
+          return parent[propertyName];
+        }
+        return undefined
+    };
+
+  return "<div class=\""
+    + container.escapeExpression(((helper = (helper = lookupProperty(helpers,"kleur") || (depth0 != null ? lookupProperty(depth0,"kleur") : depth0)) != null ? helper : container.hooks.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"kleur","hash":{},"data":data,"loc":{"start":{"line":1,"column":12},"end":{"line":1,"column":21}}}) : helper)))
+    + "\">\r\n    \r\n </div>";
+},"useData":true}));
 this["spa_templates"]["templates"]["speelbord"] = this["spa_templates"]["templates"]["speelbord"] || {};
 this["spa_templates"]["templates"]["speelbord"]["body"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
     var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
@@ -76,3 +63,29 @@ this["spa_templates"]["templates"]["speelbord"]["body"] = Handlebars.template({"
     + ((stack1 = lookupProperty(helpers,"each").call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? lookupProperty(depth0,"array") : depth0),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":3,"column":4},"end":{"line":12,"column":13}}})) != null ? stack1 : "")
     + "</tbody>\r\n</table>\r\n\r\n";
 },"usePartial":true,"useData":true});
+this["spa_templates"]["templates"]["feedbacksuccess"] = this["spa_templates"]["templates"]["feedbacksuccess"] || {};
+this["spa_templates"]["templates"]["feedbacksuccess"]["body"] = Handlebars.template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
+    var helper, lookupProperty = container.lookupProperty || function(parent, propertyName) {
+        if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
+          return parent[propertyName];
+        }
+        return undefined
+    };
+
+  return "<div id=\"feedback-success\" class=\"feedback-success alert alert-success feedback-success--fade-in feedback-success--fade-out\" role=\"alert\" style=\"display:none; position: fixed; top: 0;\">\r\n    \r\n    <main>\r\n        <p><span class=\"glyphicon glyphicon-ok \"></span>"
+    + container.escapeExpression(((helper = (helper = lookupProperty(helpers,"name") || (depth0 != null ? lookupProperty(depth0,"name") : depth0)) != null ? helper : container.hooks.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"name","hash":{},"data":data,"loc":{"start":{"line":4,"column":56},"end":{"line":4,"column":64}}}) : helper)))
+    + " wil deelnemen aan jouw spel. Geef akkoord.</p>\r\n    </main>\r\n    <footer>\r\n        <button type=\"button\" class=\"feedback-success__btn btn--akkoord\">Akkoord</button>\r\n        <button type=\"button\" class=\"feedback-success__btn btn--weigeren\">Weigeren</button>\r\n    </footer>\r\n</div>";
+},"useData":true});
+this["spa_templates"]["templates"]["catpic"] = this["spa_templates"]["templates"]["catpic"] || {};
+this["spa_templates"]["templates"]["catpic"]["body"] = Handlebars.template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
+    var helper, lookupProperty = container.lookupProperty || function(parent, propertyName) {
+        if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
+          return parent[propertyName];
+        }
+        return undefined
+    };
+
+  return "<img width=\"250\" height=\"250\" alt=\"Vitra\" name=\"large\" src=\""
+    + container.escapeExpression(((helper = (helper = lookupProperty(helpers,"url") || (depth0 != null ? lookupProperty(depth0,"url") : depth0)) != null ? helper : container.hooks.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"url","hash":{},"data":data,"loc":{"start":{"line":1,"column":60},"end":{"line":1,"column":67}}}) : helper)))
+    + "\" style=\"display: block;\">";
+},"useData":true});

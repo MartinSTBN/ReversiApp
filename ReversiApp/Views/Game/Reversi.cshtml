@@ -32,6 +32,12 @@
 <script src="~/js/templates.js"></script>
 <script src="~/js/vendor.js"></script>
 
+<div id="success"></div>
+
+<div id="feedback-danger" class="alert alert-danger" role="alert" style="display:none; position: fixed; top: 200px; width: 600px;">
+
+</div>
+
 <script>
     $(function () {
         "use strict";
@@ -53,7 +59,6 @@
 
         connection.on("ReceiveSpelers", function (result) {
             var spelers = JSON.parse(result);
-            console.log(spelers);
             if (typeof spelers[1] != "undefined") {
                 var div1 = document.getElementById("player1");
                 var div2 = document.getElementById("player2");
@@ -92,7 +97,7 @@
                     })
                 })
 
-                $(".cell").on("click", function () {   
+                $(".cell").on("click", function () {
                         if (aanDeBeurt == speler) {
                             Game.doeZet(speler, this.id).then(r => {
                                 let result = JSON.parse(r);
@@ -107,7 +112,7 @@
                         } else {
                             console.log(aanDeBeurt + " is aan de beurt");
                         }
-                    
+
                 });
             }).catch(function (err) {
                 return console.error(err.toString());
