@@ -141,6 +141,40 @@ namespace ReversiApp.Controllers
         }
 
         [HttpGet]
+        [Route("playstate/{id}")]
+        public async Task<string> Pas(int id)
+        {
+            Game game = await _context.Game.FindAsync(id);
+
+            //Check if move is possible on new game situation
+            var values = _context.BordArrayValues.Where(item => item.GameID == game.GameID).ToList();
+            foreach (var item in values)
+            {
+                game.Bord[item.Row, item.Column] = (Kleur)item.Value;
+            }
+            
+
+            string[] status = new string[2];
+            
+            if (game.Pas())
+            {
+                status[0] = "Pas";
+            }
+            else
+            {
+                status[0] = "Zet nog mogelijk!";
+            }
+            status[1] = game.AandeBeurt.ToString();
+
+            _context.Update(game);
+            await _context.SaveChangesAsync();
+
+            string json = JsonConvert.SerializeObject(status, Formatting.Indented);
+
+            return json;
+        }
+
+        [HttpGet]
         [Route("spelers/{id}")]
         public async Task<string> Spelers(int id)
         {

@@ -78,7 +78,7 @@ namespace ReversiApp.Controllers
                 }
                 else
                 {
-                    return NotFound();
+                    return RedirectToAction("Index", "Games");
                 }
             }
             else

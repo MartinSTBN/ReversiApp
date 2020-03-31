@@ -124,19 +124,30 @@ namespace ReversiApp.Controllers
                         BordArrayValues bordValues = new BordArrayValues();
                         bordValues.Row = i;
                         bordValues.Column = j;
-                        /*if (i == 4 && j == 4 || i == 4 && j == 3)
-                        {
-                            
-                            bordValues.Value = 2;
-                        }else if(i == 5 && j == 3 || i == 5 && j == 4)
+                        if (i == 4 && j == 4 || i == 5 && j == 5)
                         {
                             bordValues.Value = 1;
                         }
+                        else if (i == 3 && j == 3 ||
+                            i == 3 && j == 4 ||
+                            i == 3 && j == 5 ||
+                            i == 3 && j == 6 ||
+                            i == 4 && j == 3 ||
+                            i == 4 && j == 6 ||
+                            i == 5 && j == 3 ||
+                            i == 5 && j == 6 ||
+                            i == 6 && j == 3 ||
+                            i == 6 && j == 4 ||
+                            i == 6 && j == 5 ||
+                            i == 6 && j == 6)
+                        {
+                            bordValues.Value = 2;
+                        }
                         else
                         {
-                            bordValues.Value = Convert.ToInt32(game.Bord[i,j]);
-                        }*/
-                        bordValues.Value = Convert.ToInt32(game.Bord[i, j]);
+                            bordValues.Value = Convert.ToInt32(game.Bord[i, j]);
+                        }
+                        
                         bordValues.GameID = game.GameID;
                         _context.Add(bordValues);
                         await _context.SaveChangesAsync();

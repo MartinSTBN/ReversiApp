@@ -80,10 +80,21 @@
             }
         });
 
+        connection.on("ReceivePlayState", function (result) {
+            let data = JSON.parse(result);
+            if (data[0] == "Pas") {
+                const widget = new FeedbackWidget('feedback-danger');
+                widget.show('Geen zet meer mogelijk, player ' + data[1] + ' is nu aan de beurt!', 'danger');
+                setTimeout(function () { widget.hide(); }, 3000);
+            }
+            aanDeBeurt = data[1];
+            Game.setTitle(aanDeBeurt);
+        });
+
         Game.createBoard().then(function () {
             connection.start().then(function () {
                 Game.init('production');
-
+                //Update de namen van spelers wanneer een tweede speler joined
                 const beurtUrl = window.location.origin + "/api/spel/beurt/" + id;
                 Game.Data.get(beurtUrl).then(r => {
                     aanDeBeurt = JSON.parse(r);
@@ -97,6 +108,21 @@
                     })
                 })
 
+                //Check of spel is afgelopen of dat iemand een beurt moet overslaan
+                const playState = function () {
+                    let playStateUrl = window.location.origin + "/api/spel/playstate/" + id;
+                    Game.Data.get(playStateUrl).then(r => {
+                        console.log(r);
+                        connection.invoke("SendPlayState", r).catch(function (err) {
+                            return console.error(err.toString());
+                        });
+                    })
+                }
+                var state = window.setInterval(playState, 1000);
+
+                
+
+                //Plaatst een fiche en update de game state
                 $(".cell").on("click", function () {
                         if (aanDeBeurt == speler) {
                             Game.doeZet(speler, this.id).then(r => {
@@ -110,7 +136,9 @@
                             })
 
                         } else {
-                            console.log(aanDeBeurt + " is aan de beurt");
+                            const widget = new FeedbackWidget('feedback-danger');
+                            widget.show('Jij bent niet aan de beurt!', 'danger');
+                            setTimeout(function () { widget.hide(); }, 1000);
                         }
 
                 });

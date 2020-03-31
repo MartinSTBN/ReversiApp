@@ -34,5 +34,10 @@ namespace ReversiApp
             await Clients.All.SendAsync("ReceiveSpelers", spelers);
         }
 
+        public async Task SendPlayState(string state)
+        {
+            await Clients.All.SendAsync("ReceivePlayState", state);
+        }
+
     }
 }
