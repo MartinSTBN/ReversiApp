@@ -67,7 +67,6 @@ namespace ReversiApp.Models
                     int value1 = Int32.Parse(values[0]);
                     int value2 = Int32.Parse(values[1]);
                     Bord[value1, value2] = AandeBeurt;
-                    Console.WriteLine($"{value1} {value2} wordt {AandeBeurt}");
                 }
                 AandeBeurt = (AandeBeurt == Kleur.Wit) ? Kleur.Zwart : Kleur.Wit;
                 return true;
@@ -106,17 +105,14 @@ namespace ReversiApp.Models
                 {
                     if (Bord[row, column] == Kleur.Geen)
                     {
-                        Console.WriteLine($"Row:{row} Column:{column}");
                         if (ZetMogelijk(row, column))
                         {
-                            Console.WriteLine($"Row:{row} Column:{column} IS MOGELIJK");
                             return false;
                         }
                     }
                 }
             }
             AandeBeurt = (AandeBeurt == Kleur.Wit) ? Kleur.Zwart : Kleur.Wit;
-            Console.WriteLine($"Pas, {AandeBeurt} is nu aan de beurt");
             return true;
         }
 
@@ -128,33 +124,23 @@ namespace ReversiApp.Models
                 //kijkt op de plek vrij is
                 if (Bord[rijZet, kolomZet] == Kleur.Geen)
                 {
-                    Console.WriteLine("Plek vrij");
                     var rowLimit = Bord.GetLength(0) - 1;
                     var columnLimit = Bord.GetLength(1) - 1;
                     int neighBourNum = 1;
                     var count = 0;
-                    Console.WriteLine(neighBourNum);
                     for (var x = Math.Max(0, rijZet - 1); x <= Math.Min(rijZet + 1, rowLimit); x++)
                     {
                         for (var y = Math.Max(0, kolomZet - 1); y <= Math.Min(kolomZet + 1, columnLimit); y++)
                         {
-                            Console.WriteLine($"Neighbournum = {neighBourNum}");
                             if (x != rijZet || y != kolomZet)
                             {
                                 if (x >= 0 && y >= 0 && x <= 8 && y <= 8)
                                 {
-                                    Console.WriteLine($"{x},{y} = {Bord[x, y]}");
 
                                     //De eerste de beste neighbor die wordt gevonden
                                     if (Bord[x, y] != AandeBeurt && Bord[x, y] != Kleur.Geen)
                                     {
-                                        Console.WriteLine($"Neighbour gevonden op positie {x} {y} met kleur {Bord[x, y]}");
-                                        Console.WriteLine($"{x} {y}");
-                                        Console.WriteLine($"Neighbournum = {neighBourNum}");
-
                                         NeighbourCheck(neighBourNum, x, y);
-
-
                                     }
                                     count++;
                                 }
@@ -173,12 +159,10 @@ namespace ReversiApp.Models
                                 stukkenTeSlaan.Add(value);
                             }
                         }
-                        Console.WriteLine("Zet mogelijk");
                         return true;
                     }
                 }
             }
-            Console.WriteLine("Zet niet mogelijk");
             return false;
         }
         private List<NeighBour> neighBourPieces = new List<NeighBour>();
@@ -192,10 +176,8 @@ namespace ReversiApp.Models
             var previousColor = AandeBeurt;
             while (notEmpty)
             {
-                Console.WriteLine("Start loop");
                 if (Bord[x, y] != AandeBeurt && Bord[x, y] != Kleur.Geen)
                 {
-                    Console.WriteLine($"{Bord[x, y]} x = {x} y = {y} Added to neighBours");
                     neighBour.NeighBours.Add($"{x},{y}");
                     if (neighBourNum == 1) { x--; y--; }
                     else if (neighBourNum == 2) { x--; }
@@ -212,21 +194,15 @@ namespace ReversiApp.Models
                 {
                     if (previousColor != AandeBeurt && Bord[x, y] == Kleur.Geen)
                     {
-                        Console.WriteLine("EEN EN DAN GEEN");
-                        Console.WriteLine("COUNT = " + count);
                         for (int i = 0; i < count; i++)
                         {
                             neighBour.NeighBours.RemoveAt(neighBour.NeighBours.Count - 1);
                         }
-
-
                     }
-                    Console.WriteLine("Stop loop");
                     notEmpty = false;
 
                 }
             } //end while
-            Console.WriteLine(neighBour.NeighBours.Count);
             if (neighBour.NeighBours.Count > 0)
             {
                 neighBourPieces.Add(neighBour);

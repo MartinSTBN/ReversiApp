@@ -87,8 +87,8 @@
                 widget.show('Geen zet meer mogelijk, player ' + data[1] + ' is nu aan de beurt!', 'danger');
                 setTimeout(function () { widget.hide(); }, 3000);
             }
-            aanDeBeurt = data[1];
-            Game.setTitle(aanDeBeurt);
+           
+            Game.setTitle(data[1]);
         });
 
         Game.createBoard().then(function () {
@@ -118,7 +118,7 @@
                         });
                     })
                 }
-                var state = window.setInterval(playState, 1000);
+                var state = window.setInterval(playState, 2000);
 
                 
 
