@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -218,6 +219,7 @@ namespace ReversiApp.Controllers
             return View(game);
         }
 
+        [Authorize(Roles = "Administrator")]
         // GET: Games/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -238,6 +240,7 @@ namespace ReversiApp.Controllers
 
         // POST: Games/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Administrator")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {

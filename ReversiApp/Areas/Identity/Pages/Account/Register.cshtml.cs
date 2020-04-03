@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using ReversiApp.Data;
+using ReversiApp.Models;
 
 namespace ReversiApp.Areas.Identity.Pages.Account
 {
@@ -22,16 +24,19 @@ namespace ReversiApp.Areas.Identity.Pages.Account
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ILogger<RegisterModel> _logger;
+        private readonly ApplicationDbContext _context;
 
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
-            ILogger<RegisterModel> logger)
+            ILogger<RegisterModel> logger,
+            ApplicationDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
+            _context = context;
         }
 
         [BindProperty]
@@ -81,6 +86,10 @@ namespace ReversiApp.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     await _userManager.AddToRoleAsync(user, "Normal");
+                    Highscore highscore = new Highscore();
+                    highscore.UserID = user.Id;
+                    await _context.AddAsync(highscore);
+                    await _context.SaveChangesAsync();
 
                     _logger.LogInformation("User created a new account with password.");
 

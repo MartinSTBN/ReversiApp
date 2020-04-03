@@ -29,8 +29,6 @@
                     <button id="@item.GameID" class="join">Join</button>
                     @if (User.IsInRole("Administrator"))
                     {
-                        <a asp-action="Edit" asp-route-id="@item.GameID">Edit</a>
-                        <a asp-action="Details" asp-route-id="@item.GameID"> Details </a>
                         <a asp-action="Delete" asp-route-id="@item.GameID"> Delete </a>
                     }
 
@@ -45,19 +43,25 @@
     $(function () {
         var timer;
         var id;
-        const waitingAcceptStatus = function () {
-            let apiUrl = window.location.origin + "/api/spel/joinstatus/" + id;
-            Game.Data.get(apiUrl).then(r => {
-                let result = JSON.parse(r);
-                if (result == "Akkoord") {
-                    window.clearInterval(timer);
-                    window.location.href = "/Game/Reversi/" + id;
-                }
-                
-            })
-        }
+        
 
         $(".join").click(function () {
+            const waitingAcceptStatus = function () {
+                let apiUrl = window.location.origin + "/api/spel/joinstatus/" + id;
+                Game.Data.get(apiUrl).then(r => {
+                    let result = JSON.parse(r);
+                    if (result == "Akkoord") {
+                        window.clearInterval(timer);
+                        window.location.href = "/Game/Reversi/" + id;
+                    }
+
+                })
+            }
+
+            if (timer) {
+                window.clearInterval(timer);
+            }
+
             id = this.id;
             let apiUrl = window.location.origin + "/api/spel/join/" + id;
             $.post(apiUrl,
@@ -65,7 +69,6 @@
                     email: '@ViewBag.Email'
                 },
                 function (data, status) {
-                    alert("Data: " + data + "\nStatus: " + status);
                     timer = window.setInterval(waitingAcceptStatus, 1000);
                 }
             );

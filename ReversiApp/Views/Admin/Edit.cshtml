@@ -6,18 +6,41 @@
 
 <h1>Edit</h1>
 
-<h4>Player</h4>
+<h4>User @Model.Email</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" autocomplete="off" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
+            @if (User.IsInRole("Administrator"))
+            {
+                <div class="form-group">
+                    <label asp-for="UserName" class="control-label"></label>
+                    <input asp-for="UserName" autocomplete="off" class="form-control" />
+                    <span asp-validation-for="UserName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Email" class="control-label"></label>
+                    <input asp-for="Email" autocomplete="off" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+            }
+
+            @if (User.IsInRole("Moderator"))
+            {
+                <div class="form-group" hidden>
+                    <label asp-for="UserName" class="control-label"></label>
+                    <input asp-for="UserName" autocomplete="off" class="form-control" />
+                    <span asp-validation-for="UserName" class="text-danger"></span>
+                </div>
+                <div class="form-group" hidden>
+                    <label asp-for="Email" class="control-label"></label>
+                    <input asp-for="Email" autocomplete="off" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+            }
+
             <div class="form-group">
                 <label asp-for="Password" class="control-label">New Password</label>
                 <input asp-for="Password" autocomplete="off" class="form-control" />
@@ -29,7 +52,7 @@
                     <label asp-for="Role" class="control-label">Role</label>
                     @{
                         List<SelectListItem> roles = new List<SelectListItem>()
-                                                    {
+                                                                            {
                                 new SelectListItem
                                 {
                                     Text = "Normal",
@@ -61,7 +84,7 @@
                     <label asp-for="Role" class="control-label">Role</label>
                     @{
                         List<SelectListItem> roles = new List<SelectListItem>()
-                                                    {
+                                                                            {
                                 new SelectListItem
                                 {
                                     Text = "Normal",
@@ -81,7 +104,7 @@
                     <label asp-for="TwoFactorEnabled" class="control-label">Two factor has been</label>
                     @{
                         List<SelectListItem> twofac = new List<SelectListItem>()
-                                                    {
+                                                                            {
                                 new SelectListItem
                                 {
                                     Text = "Enabled",

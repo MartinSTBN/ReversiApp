@@ -14,7 +14,7 @@ using ReversiApp.Models;
 
 namespace ReversiApp.Controllers
 {
-    [Authorize(Roles = "Administrator")]
+    //[Authorize(Roles = "Administrator")]
     [Route("api/[controller]")]
     [ApiController]
     public class SpelController : ControllerBase

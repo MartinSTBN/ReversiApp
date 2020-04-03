@@ -46,7 +46,8 @@ namespace ReversiApp.Controllers
                        Id = user.Id,
                        Email = user.Email,
                        Password = user.PasswordHash,
-                       Role = role
+                       Role = role,
+                       UserName = user.UserName
                    });
             }
 
@@ -72,6 +73,7 @@ namespace ReversiApp.Controllers
         }
 
         // GET: Admin/Create
+        [Authorize(Roles = "Administrator")]
         public IActionResult Create()
         {
             return View();
@@ -82,22 +84,34 @@ namespace ReversiApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Email,Password,Role")] AppUser appUser)
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> Create([Bind("Id,Email,Password,Role,UserName")] AppUser appUser)
         {
             if (ModelState.IsValid)
             {
-                var user = new IdentityUser { UserName = appUser.Email, Email = appUser.Email, EmailConfirmed = true };
-                var result = await _userManager.CreateAsync(user, appUser.Password);
-                await _userManager.AddToRoleAsync(user, appUser.Role);
-
-                if (result.Succeeded)
+                var email = _userManager.Users.FirstOrDefault(r => r.Email == appUser.Email);
+                if(email == null)
                 {
-                    return RedirectToAction("Index", "Admin");
+                    var user = new IdentityUser { UserName = appUser.UserName, Email = appUser.Email, EmailConfirmed = true };
+                    var result = await _userManager.CreateAsync(user, appUser.Password);
+                    await _userManager.AddToRoleAsync(user, appUser.Role);
+                    if (result.Succeeded)
+                    {
+                        Highscore highscore = new Highscore();
+                        highscore.UserID = user.Id;
+                        await _context.AddAsync(highscore);
+                        await _context.SaveChangesAsync();
+                        return RedirectToAction("Index", "Admin");
+                    }
+
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
                 }
-
-                foreach (var error in result.Errors)
+                else
                 {
-                    ModelState.AddModelError("", error.Description);
+                    ModelState.AddModelError("Email", "Email address already exists. Please enter a different email address.");
                 }
             }
             return View(appUser);
@@ -121,6 +135,7 @@ namespace ReversiApp.Controllers
             appUser.Email = user.Email;
             appUser.Password = user.PasswordHash;
             appUser.TwoFactorEnabled = user.TwoFactorEnabled;
+            appUser.UserName = user.UserName;
             var role = await _userManager.GetRolesAsync(user);
             foreach (var item in role)
             {
@@ -225,6 +240,7 @@ namespace ReversiApp.Controllers
         public async Task<IActionResult> DeleteConfirmed([Bind("Id,Email,Password")] AppUser appUser)
         {
             var user = await _userManager.FindByIdAsync(appUser.Id);
+            
             await _userManager.DeleteAsync(user);
             
             //await _userManager.RemoveFromRoleAsync(user, appUser.Role);
@@ -234,6 +250,11 @@ namespace ReversiApp.Controllers
         private bool UserExists(string id)
         {
             return _userManager.Users.Any(e => e.Id == id);
+        }
+
+        private bool HighScoreExists(string id)
+        {
+            return _context.Highscore.Any(e => e.UserID == id);
         }
     }
 }

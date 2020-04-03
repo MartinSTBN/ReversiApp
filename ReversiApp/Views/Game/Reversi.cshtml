@@ -44,6 +44,10 @@
         var aanDeBeurt;
         var speler = '@Model.Speler.Kleur';
         var connection = new signalR.HubConnectionBuilder().withUrl("/api/spel").build();
+        var timeOut;
+        while (timeOut--) {
+            window.clearTimeout(timeOut); // will do nothing if no timeout with id is present
+        }
 
         connection.on("ReceiveGameData", function (speler, cellId, result) {
             Game.updateBoard(result, speler, cellId);
@@ -80,27 +84,19 @@
             }
         });
 
+        var widget;
         connection.on("ReceivePlayState", function (result) {
-            let data = JSON.parse(result);
-            if (data[0] == "Pas") {
-                const widget = new FeedbackWidget('feedback-danger');
-                widget.show('Geen zet meer mogelijk, player ' + data[1] + ' is nu aan de beurt!', 'danger');
-                setTimeout(function () { widget.hide(); }, 3000);
+            console.log("Test");
+            let parsedResult = JSON.parse(result);
+            aanDeBeurt = parsedResult[1];
+            if (parsedResult[0] == "Pas") {
+                widget = new FeedbackWidget('feedback-danger');
+                widget.show('Geen zet meer mogelijk, player ' + aanDeBeurt + " is nu aan de beurt!", 'danger');
+                timeOut = setTimeout(function () { widget.hide(); }, 3000);
+                Game.setTitle(aanDeBeurt);
             }
-           
-            Game.setTitle(data[1]);
+            
         });
-
-        //Check of spel is afgelopen of dat iemand een beurt moet overslaan
-        const playState = function () {
-            let playStateUrl = window.location.origin + "/api/spel/playstate/" + id;
-            Game.Data.get(playStateUrl).then(r => {
-                console.log(r);
-                connection.invoke("SendPlayState", r).catch(function (err) {
-                    return console.error(err.toString());
-                });
-            })
-        }
 
         Game.createBoard().then(function () {
             connection.start().then(function () {
@@ -113,24 +109,36 @@
                     Game.setTitle(aanDeBeurt);
                 }).then(function () {
                     Game.getSpelers().then(r => {
-                        //playState();
                         connection.invoke("SendSpelers", r).catch(function (err) {
                             return console.error(err.toString());
                         });
+                    }).then(function () {
+                        console.log("Invoking playstate...");
+                        const playUrl = window.location.origin + "/api/spel/playstate/" + id;
+                        Game.Model.getPlayState(playUrl).then(r => {
+                            console.log(r);
+                            connection.invoke("SendPlayState", r).catch(function (err) {
+                                return console.error(err.toString());
+                            });
+                        })
                     })
                 })
 
                 //Plaatst een fiche en update de game state
                 $(".cell").on("click", function () {
+                    if (widget) {
+                        widget.hide();
+                    }
                         if (aanDeBeurt == speler) {
                             Game.doeZet(speler, this.id).then(r => {
-                                let result = JSON.parse(r);
+                                var result = r;
+                                let parsedResult = JSON.parse(r);
                                 if (!result) { }
                                 else {
-                                    connection.invoke("SendGameData", speler, this.id, r).catch(function (err) {
+                                    
+                                    connection.invoke("SendGameData", speler, this.id, result).catch(function (err) {
                                         return console.error(err.toString());
                                     });
-                                    //playState();
                                 }
                             })
 
