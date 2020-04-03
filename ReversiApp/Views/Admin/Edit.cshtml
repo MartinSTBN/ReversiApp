@@ -23,35 +23,88 @@
                 <input asp-for="Password" autocomplete="off" class="form-control" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Role" class="control-label">Role</label>
-                @{
-                    List<SelectListItem> roles = new List<SelectListItem>() 
-                    { 
-                        new SelectListItem
-                        {
-                            Text = "Normal",
-                            Value = "Normal",
-                            Selected = false
-                        },
-                        new SelectListItem
-                        {
-                            Text = "Moderator",
-                            Value = "Moderator",
-                            Selected = false
-                        },
-                        new SelectListItem
-                        {
-                            Text = "Administrator",
-                            Value = "Administrator",
-                            Selected = false
-                        }
-                    };
-                }
-                @Html.DropDownList("Role", roles, new { @class = "form-control" })
-                <span asp-validation-for="Role" class="text-danger"></span>
-            </div>
-            
+            @if (User.IsInRole("Administrator"))
+            {
+                <div class="form-group">
+                    <label asp-for="Role" class="control-label">Role</label>
+                    @{
+                        List<SelectListItem> roles = new List<SelectListItem>()
+                                                    {
+                                new SelectListItem
+                                {
+                                    Text = "Normal",
+                                    Value = "Normal",
+                                    Selected = false
+                                },
+                                new SelectListItem
+                                {
+                                    Text = "Moderator",
+                                    Value = "Moderator",
+                                    Selected = false
+                                },
+                                new SelectListItem
+                                {
+                                    Text = "Administrator",
+                                    Value = "Administrator",
+                                    Selected = false
+                                }
+                            };
+                    }
+                    @Html.DropDownList("Role", roles, new { @class = "form-control" })
+                    <span asp-validation-for="Role" class="text-danger"></span>
+                </div>
+            }
+
+            @if (User.IsInRole("Moderator"))
+            {
+                <div class="form-group" hidden>
+                    <label asp-for="Role" class="control-label">Role</label>
+                    @{
+                        List<SelectListItem> roles = new List<SelectListItem>()
+                                                    {
+                                new SelectListItem
+                                {
+                                    Text = "Normal",
+                                    Value = "Normal",
+                                    Selected = false
+                                }
+                            };
+                    }
+                    @Html.DropDownList("Role", roles, new { @class = "form-control" })
+                    <span asp-validation-for="Role" class="text-danger"></span>
+                </div>
+            }
+
+            @if (Model.TwoFactorEnabled)
+            {
+                <div class="form-group">
+                    <label asp-for="TwoFactorEnabled" class="control-label">Two factor has been</label>
+                    @{
+                        List<SelectListItem> twofac = new List<SelectListItem>()
+                                                    {
+                                new SelectListItem
+                                {
+                                    Text = "Enabled",
+                                    Value = "true",
+                                    Selected = false
+                                },
+                                new SelectListItem
+                                {
+                                    Text = "Disable",
+                                    Value = "false",
+                                    Selected = false
+                                }
+                            };
+                    }
+                    @Html.DropDownList("TwoFactorEnabled", twofac, new { @class = "form-control" })
+                    <span asp-validation-for="TwoFactorEnabled" class="text-danger"></span>
+                </div>
+            }
+            else
+            {
+                <h6>This user has not enabled Two Factor Authentication.</h6>
+            }
+
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>

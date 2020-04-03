@@ -14,5 +14,6 @@ namespace ReversiApp.Models
         [DataType(DataType.Password)]
         public string Password { get; set; }
         public string Role { get; set; }
+        public bool TwoFactorEnabled { get; set; }
     }
 }

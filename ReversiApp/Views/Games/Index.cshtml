@@ -50,6 +50,7 @@
             Game.Data.get(apiUrl).then(r => {
                 let result = JSON.parse(r);
                 if (result == "Akkoord") {
+                    window.clearInterval(timer);
                     window.location.href = "/Game/Reversi/" + id;
                 }
                 

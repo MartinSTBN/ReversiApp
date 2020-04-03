@@ -91,6 +91,17 @@
             Game.setTitle(data[1]);
         });
 
+        //Check of spel is afgelopen of dat iemand een beurt moet overslaan
+        const playState = function () {
+            let playStateUrl = window.location.origin + "/api/spel/playstate/" + id;
+            Game.Data.get(playStateUrl).then(r => {
+                console.log(r);
+                connection.invoke("SendPlayState", r).catch(function (err) {
+                    return console.error(err.toString());
+                });
+            })
+        }
+
         Game.createBoard().then(function () {
             connection.start().then(function () {
                 Game.init('production');
@@ -102,24 +113,12 @@
                     Game.setTitle(aanDeBeurt);
                 }).then(function () {
                     Game.getSpelers().then(r => {
-                        playState();
+                        //playState();
                         connection.invoke("SendSpelers", r).catch(function (err) {
                             return console.error(err.toString());
                         });
                     })
                 })
-
-                //Check of spel is afgelopen of dat iemand een beurt moet overslaan
-                const playState = function () {
-                    let playStateUrl = window.location.origin + "/api/spel/playstate/" + id;
-                    Game.Data.get(playStateUrl).then(r => {
-                        console.log(r);
-                        connection.invoke("SendPlayState", r).catch(function (err) {
-                            return console.error(err.toString());
-                        });
-                    })
-                }
-               
 
                 //Plaatst een fiche en update de game state
                 $(".cell").on("click", function () {
@@ -131,7 +130,7 @@
                                     connection.invoke("SendGameData", speler, this.id, r).catch(function (err) {
                                         return console.error(err.toString());
                                     });
-                                    playState();
+                                    //playState();
                                 }
                             })
 

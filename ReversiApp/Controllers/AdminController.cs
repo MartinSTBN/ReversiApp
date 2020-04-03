@@ -14,7 +14,7 @@ using ReversiApp.Models;
 
 namespace ReversiApp.Controllers
 {
-    [Authorize(Roles = "Administrator")]
+    [Authorize(Roles = "Administrator, Moderator")]
     public class AdminController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -29,17 +29,26 @@ namespace ReversiApp.Controllers
         }
 
         // GET: Admin
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var users = _userManager.Users.ToList();
+            var users = await _userManager.Users.ToListAsync();
             var vm = new List<AppUser>();
-            users.ForEach(item => vm.Add(
-               new AppUser()
-               {
-                   Id = item.Id,
-                   Email = item.Email,
-                   Password = item.PasswordHash
-               }));
+           
+
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                var role = roles.FirstOrDefault();
+
+                vm.Add(
+                   new AppUser()
+                   {
+                       Id = user.Id,
+                       Email = user.Email,
+                       Password = user.PasswordHash,
+                       Role = role
+                   });
+            }
 
             return View(vm);
         }
@@ -111,6 +120,7 @@ namespace ReversiApp.Controllers
             AppUser appUser = new AppUser();
             appUser.Email = user.Email;
             appUser.Password = user.PasswordHash;
+            appUser.TwoFactorEnabled = user.TwoFactorEnabled;
             var role = await _userManager.GetRolesAsync(user);
             foreach (var item in role)
             {
@@ -125,7 +135,7 @@ namespace ReversiApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit([Bind("Id,Email,Password,Role")] AppUser appUser)
+        public async Task<IActionResult> Edit([Bind("Id,Email,Password,Role,TwoFactorEnabled")] AppUser appUser)
         {
             if (ModelState.IsValid)
             {
@@ -150,6 +160,12 @@ namespace ReversiApp.Controllers
                 var removeRole = await _userManager.RemoveFromRoleAsync(user, currentRole);
                 var setRole = await _userManager.AddToRoleAsync(user, appUser.Role);
 
+                if(appUser.TwoFactorEnabled == false)
+                {
+                    await _userManager.SetTwoFactorEnabledAsync(user, appUser.TwoFactorEnabled);
+                }
+                
+
                 foreach (var error in removeRole.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
@@ -173,6 +189,7 @@ namespace ReversiApp.Controllers
         }
 
         // GET: Admin/Delete/5
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Delete(string id)
         {
 
@@ -203,6 +220,7 @@ namespace ReversiApp.Controllers
 
         // POST: Admin/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Administrator")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed([Bind("Id,Email,Password")] AppUser appUser)
         {
