@@ -133,7 +133,7 @@
                             Game.doeZet(speler, this.id).then(r => {
                                 var result = r;
                                 let parsedResult = JSON.parse(r);
-                                if (!result) { }
+                                if (!parsedResult) { }
                                 else {
                                     
                                     connection.invoke("SendGameData", speler, this.id, result).catch(function (err) {
