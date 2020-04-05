@@ -99,9 +99,9 @@ namespace ReversiApp.Models
 
         public bool Pas()
         {
-            for (int row = 0; row < Bord.GetLength(0); row++)
+            for (int row = 1; row < Bord.GetLength(0) - 1; row++)
             {
-                for (int column = 0; column < Bord.GetLength(1); column++)
+                for (int column = 1; column < Bord.GetLength(1) - 1; column++)
                 {
                     if (Bord[row, column] == Kleur.Geen)
                     {
@@ -178,6 +178,7 @@ namespace ReversiApp.Models
             {
                 if (Bord[x, y] != AandeBeurt && Bord[x, y] != Kleur.Geen)
                 {
+                    Console.WriteLine(neighBourNum);
                     neighBour.NeighBours.Add($"{x},{y}");
                     if (neighBourNum == 1) { x--; y--; }
                     else if (neighBourNum == 2) { x--; }

@@ -139,6 +139,13 @@
                                     connection.invoke("SendGameData", speler, this.id, result).catch(function (err) {
                                         return console.error(err.toString());
                                     });
+                                    const playUrl = window.location.origin + "/api/spel/playstate/" + id;
+                                    Game.Model.getPlayState(playUrl).then(r => {
+                                        console.log(r);
+                                        connection.invoke("SendPlayState", r).catch(function (err) {
+                                            return console.error(err.toString());
+                                        });
+                                    })
                                 }
                             })
 
