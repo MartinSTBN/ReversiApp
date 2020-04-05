@@ -38,7 +38,15 @@ namespace ReversiApp.Controllers
                 if (speler != null)
                 {
                     var game = await _context.Game.FindAsync(speler.GameID);
-                    return LocalRedirect("/Game/Reversi/" + game.GameID);
+                    if(game != null)
+                    {
+                        return LocalRedirect("/Game/Reversi/" + game.GameID);
+                    }
+                    else
+                    {
+                        return LocalRedirect("/Games/Index");
+                    }
+  
                 }
             }
             else
@@ -238,7 +246,7 @@ namespace ReversiApp.Controllers
             return View(game);
         }
 
-        // POST: Games/Delete/5
+        // POST: Games/Delete
         [HttpPost, ActionName("Delete")]
         [Authorize(Roles = "Administrator")]
         [ValidateAntiForgeryToken]
@@ -249,16 +257,97 @@ namespace ReversiApp.Controllers
             IdentityUser user = await _userManager.GetUserAsync(User);
             var speler = await _context.Speler.FirstOrDefaultAsync(m => m.GameID == game.GameID);
             var bordValues = await _context.BordArrayValues.Where(m => m.GameID == game.GameID).ToListAsync();
-            foreach (var value in bordValues)
+            if (bordValues != null)
             {
-                _context.BordArrayValues.Remove(value);
+                foreach (var value in bordValues)
+                {
+                    _context.BordArrayValues.Remove(value);
+                }
             }
-
-            
-            _context.Speler.Remove(speler);
-            _context.Game.Remove(game);
+            if (speler != null)
+            {
+                _context.Speler.Remove(speler);
+            }
+            if(game != null)
+            {
+                _context.Game.Remove(game);
+            }
+           
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        // POST: Games/Leave
+        [HttpPost, ActionName("Leave")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Leave(int id)
+        {
+
+            var game = await _context.Game.FindAsync(id);
+            if(game != null)
+            {
+                IdentityUser user = await _userManager.GetUserAsync(User);
+                var speler = await _context.Speler.FirstOrDefaultAsync(m => m.Id == user.Id);
+                if (speler != null)
+                {
+                    _context.Speler.Remove(speler);
+                    game.SpelerDieWiltJoinen = null;
+                    game.JoinAccepteerStatus = null;
+                }
+
+                var spelerCount = await _context.Speler.CountAsync(m => m.GameID == game.GameID);
+                var bordValues = await _context.BordArrayValues.Where(m => m.GameID == game.GameID).ToListAsync();
+                if (spelerCount < 2)
+                {
+                    if (bordValues != null)
+                    {
+                        foreach (var value in bordValues)
+                        {
+                            _context.BordArrayValues.Remove(value);
+                        }
+                    }
+                }
+                _context.Game.Remove(game);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return LocalRedirect("/Games/Index");
+        }
+
+        // POST: Games/CreateNew
+        [HttpPost, ActionName("CreateNew")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateNew(int id)
+        {
+
+            var game = await _context.Game.FindAsync(id);
+            if (game != null)
+            {
+                IdentityUser user = await _userManager.GetUserAsync(User);
+                var speler = await _context.Speler.FirstOrDefaultAsync(m => m.Id == user.Id);
+                if (speler != null)
+                {
+                    _context.Speler.Remove(speler);
+                    game.SpelerDieWiltJoinen = null;
+                    game.JoinAccepteerStatus = null;
+                }
+
+                var spelerCount = await _context.Speler.CountAsync(m => m.GameID == game.GameID);
+                var bordValues = await _context.BordArrayValues.Where(m => m.GameID == game.GameID).ToListAsync();
+                if (spelerCount < 2)
+                {
+                    if (bordValues != null)
+                    {
+                        foreach (var value in bordValues)
+                        {
+                            _context.BordArrayValues.Remove(value);
+                        }
+                    }
+                }
+                _context.Game.Remove(game);
+                await _context.SaveChangesAsync();
+            }
+            return LocalRedirect("/Games/Create");
         }
 
         private bool GameExists(int id)
